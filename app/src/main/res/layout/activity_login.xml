@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.component.login.LoginActivity">
+
+        <TextView
+            android:layout_marginTop="100.dp"
+            android:id="@+id/labTitle"
+            android:text="UserLogin"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="50.dp" />
+
+        <EditText
+            android:id="@+id/txtUserName"
+            android:layout_below="@+id/labTitle"
+            android:layout_width="match_parent"
+            android:layout_height="50.dp"
+            android:autofillHints="UserName"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/txtUserPwd"
+            android:layout_below="@+id/txtUserName"
+            android:layout_width="match_parent"
+            android:layout_height="50.dp" />
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_below="@+id/txtUserPwd"
+            android:text="Login"
+            android:layout_width="match_parent"
+            android:layout_height="50.dp" />
+    </RelativeLayout>
+</layout>
