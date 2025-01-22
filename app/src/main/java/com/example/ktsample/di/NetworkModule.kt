@@ -39,6 +39,7 @@ class NetworkModule {
             .baseUrl("http://example.com/")
             .client(httpClient)
             .build()
+
     }
 
 }
