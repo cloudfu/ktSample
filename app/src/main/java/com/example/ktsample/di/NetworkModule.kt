@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.scopes.ActivityScoped
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -20,7 +21,7 @@ import javax.inject.Singleton
 @InstallIn(ActivityComponent::class)
 class NetworkModule {
 
-    @Singleton
+    @ActivityScoped
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
@@ -30,7 +31,7 @@ class NetworkModule {
             .build()
     }
 
-    @Singleton
+    @ActivityScoped
     @Provides
     fun providerRetrofit(httpClient: OkHttpClient): Retrofit{
         return Retrofit.Builder()
