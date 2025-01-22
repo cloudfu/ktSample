@@ -23,9 +23,10 @@ class LoginViewModel : BaseViewModel() {
 
     fun doLogin(userName: String, userPwd: String) {
         viewModelScope.launch {
-            apiService.getCities()
-                .also {
-                Log.i("getCities", it.get(1).name)
+            apiService.getCities().also {
+                for(item in it){
+                    Log.i("getCities", item.toString())
+                }
             }
         }
 
