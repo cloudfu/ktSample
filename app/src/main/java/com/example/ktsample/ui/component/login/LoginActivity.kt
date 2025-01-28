@@ -6,8 +6,10 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.snapshots.Snapshot.Companion.observe
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.ktsample.data.login.LoginResponse
 import com.example.ktsample.databinding.ActivityLoginBinding
+import com.example.ktsample.di.EngineViewModel
 import com.example.ktsample.di.Truck
 import com.example.ktsample.ui.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,11 +19,16 @@ import javax.inject.Inject
 class LoginActivity : BaseActivity() {
 
     private val TAG = "LoginActivity"
-    private val mLoginViewModel: LoginViewModel by viewModels()
+
+//    private val mLoginViewModel: LoginViewModel by viewModels()
+    private val mLoginViewModel: LoginViewModel by lazy{
+        ViewModelProvider(this)[LoginViewModel::class.java]
+    }
     private lateinit var mBinding : ActivityLoginBinding
 
     @Inject
-    lateinit var track: Truck
+    lateinit var engineViewModel: EngineViewModel
+
 
     override fun observeViewModel() {
         // TODO: Observer()
@@ -34,7 +41,7 @@ class LoginActivity : BaseActivity() {
         mBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
         initEvent()
-        track.deliver()
+        engineViewModel.deliver()
     }
 
     private fun initEvent(){

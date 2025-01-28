@@ -9,9 +9,15 @@ import com.example.ktsample.data.api.ApiService
 import com.example.ktsample.data.login.LoginRequest
 import com.example.ktsample.data.login.LoginResponse
 import com.example.ktsample.ui.base.BaseViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 class LoginViewModel : BaseViewModel() {
+
+    private val viewModelJob = SupervisorJob()
+    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     private var _loginResponse = MutableLiveData<LoginResponse>()
     val loginResponse: LiveData<LoginResponse>
