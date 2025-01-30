@@ -30,7 +30,6 @@ class LoginActivity @Inject constructor(): BaseActivity() {
     @Inject
     lateinit var engineViewModel: EngineViewModel
 
-
     override fun observeViewModel() {
         // TODO: Observer()
         mLoginViewModel.loginResponse.observe(this, Observer() {
@@ -42,7 +41,7 @@ class LoginActivity @Inject constructor(): BaseActivity() {
             { it ->
                 for(city in it.data?.cities!!){
                     Log.i(TAG,city.toString()) }
-            }
+                }
         )
     }
 

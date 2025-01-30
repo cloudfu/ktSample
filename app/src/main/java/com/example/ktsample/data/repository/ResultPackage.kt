@@ -4,10 +4,8 @@ import com.example.ktsample.data.repository.DataPackageState.SUCCEED
 import com.google.gson.annotations.SerializedName
 
 class ResultPackage<T>(
-//    @SerializedName("data")
-    val data: T? = null,
-//    @SerializedName("state")
-    val state: DataPackageState
+    val state: DataPackageState,
+    val data: T? = null
 ) {
 
 

@@ -5,20 +5,21 @@ import com.example.ktsample.data.repository.ResultPackage
 import com.example.ktsample.data.city.City
 import com.example.ktsample.data.city.CityList
 import com.example.ktsample.data.repository.DataPackageState
+import com.example.ktsample.data.repository.IDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class RemoteDataSource @Inject constructor(
     private val networkProvider: NetworkProvider
-) {
-    suspend fun getCities(): ResultPackage<CityList> {
+): IDataSource {
+    override suspend fun getCities(): ResultPackage<CityList> {
         val apiService = networkProvider.createApiService(ApiService::class.java)
         return when(val result = networkProvider.request(apiService::getCities)){
             is List<*> ->{
                 ResultPackage(
-                    data = CityList(result as List<City>),
-                    state = DataPackageState.SUCCEED
+                    state = DataPackageState.SUCCEED,
+                    data = CityList(result as List<City>)
                 )
             }
             // ErrCode

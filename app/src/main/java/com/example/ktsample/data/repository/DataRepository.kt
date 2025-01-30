@@ -3,6 +3,7 @@ package com.example.ktsample.data.repository
 import androidx.collection.LruCache
 import com.example.ktsample.data.city.City
 import com.example.ktsample.data.city.CityList
+import com.example.ktsample.data.local.LocalDataSource
 import com.example.ktsample.data.remote.RemoteDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +14,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DataRepository @Inject constructor(private val remoteDataSource: RemoteDataSource) {
+class DataRepository @Inject constructor(
+    private val remoteDataSource: RemoteDataSource,
+    private val localDataSource: LocalDataSource
+) {
 
     @Inject
     lateinit var mRetrofit: Retrofit
@@ -21,6 +25,7 @@ class DataRepository @Inject constructor(private val remoteDataSource: RemoteDat
     fun getCities(): Flow<ResultPackage<CityList>> {
         return flow {
             emit(remoteDataSource.getCities())
+            emit(localDataSource.getCities())
         }.flowOn(Dispatchers.IO)
     }
 

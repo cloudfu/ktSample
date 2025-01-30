@@ -8,3 +8,5 @@ data class City(
         return "id:$id, name=$name"
     }
 }
+
+data class CityList(val cities: List<City>)
