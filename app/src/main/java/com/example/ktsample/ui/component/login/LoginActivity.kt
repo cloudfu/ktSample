@@ -16,14 +16,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LoginActivity : BaseActivity() {
+class LoginActivity @Inject constructor(): BaseActivity() {
 
     private val TAG = "LoginActivity"
 
-//    private val mLoginViewModel: LoginViewModel by viewModels()
-    private val mLoginViewModel: LoginViewModel by lazy{
-        ViewModelProvider(this)[LoginViewModel::class.java]
-    }
+    private val mLoginViewModel: LoginViewModel by viewModels()
+//    private val mLoginViewModel: LoginViewModel by lazy{
+//        ViewModelProvider(this)[LoginViewModel::class.java]
+//    }
+
     private lateinit var mBinding : ActivityLoginBinding
 
     @Inject
@@ -35,13 +36,21 @@ class LoginActivity : BaseActivity() {
         mLoginViewModel.loginResponse.observe(this, Observer() {
             Log.i(TAG, it.toString())
         })
+
+        mLoginViewModel.cityList.observe(
+            this,
+            { it ->
+                for(city in it.data?.cities!!){
+                    Log.i(TAG,city.toString()) }
+            }
+        )
     }
 
     override fun initViewBinding() {
         mBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
         initEvent()
-        engineViewModel.deliver()
+//        engineViewModel.deliver()
     }
 
     private fun initEvent(){

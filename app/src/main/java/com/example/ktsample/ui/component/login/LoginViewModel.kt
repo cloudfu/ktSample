@@ -4,35 +4,42 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.ktsample.data.DataRepository
+import com.example.ktsample.data.repository.DataPackageState
+import com.example.ktsample.data.repository.DataRepository
 import com.example.ktsample.data.api.ApiService
-import com.example.ktsample.data.login.LoginRequest
+import com.example.ktsample.data.city.City
+import com.example.ktsample.data.city.CityList
 import com.example.ktsample.data.login.LoginResponse
+import com.example.ktsample.data.repository.ResultPackage
 import com.example.ktsample.ui.base.BaseViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel : BaseViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(private val dataRepository: DataRepository): BaseViewModel() {
 
-    private val viewModelJob = SupervisorJob()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+//    private val viewModelJob = SupervisorJob()
+//    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private val TAG = "LoginViewModel"
 
     private var _loginResponse = MutableLiveData<LoginResponse>()
     val loginResponse: LiveData<LoginResponse>
         get()= _loginResponse
 
-    private val apiService: ApiService by lazy {
-        DataRepository().getRemoteService(ApiService::class.java)
-    }
+    private var _cityList = MutableLiveData<ResultPackage<CityList>>()
+    val cityList: LiveData<ResultPackage<CityList>> get() = _cityList
+
+//    private val remoteService: ApiService by lazy {
+//        dataRepository.getRemoteService(ApiService::class.java)
+//    }
 
     fun doLogin(userName: String, userPwd: String) {
         viewModelScope.launch {
-            apiService.getCities().also {
-                for(item in it){
-                    Log.i("getCities", item.toString())
-                }
+
+            dataRepository.getCities().collect {
+                Log.i(TAG, "${it.state}: $it")
+                _cityList.value = it
             }
         }
 

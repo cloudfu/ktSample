@@ -3,10 +3,9 @@ package com.example.ktsample.di
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,11 +18,11 @@ import javax.inject.Singleton
  * @param
  * @return
  */
+@InstallIn(SingletonComponent::class)
 @Module
-@InstallIn(ActivityRetainedComponent::class)
 class NetworkModule {
 
-    @ActivityRetainedScoped
+    @Singleton
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
@@ -33,15 +32,14 @@ class NetworkModule {
             .build()
     }
 
-    @ActivityRetainedScoped
+    @Singleton
     @Provides
     fun providerRetrofit(httpClient: OkHttpClient): Retrofit{
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("http://example.com/")
+            .baseUrl("https://jenly1314.gitlab.io/")
             .client(httpClient)
             .build()
-
     }
-
 }
+
