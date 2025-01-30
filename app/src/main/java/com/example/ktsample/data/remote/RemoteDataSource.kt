@@ -13,12 +13,16 @@ import javax.inject.Singleton
 class RemoteDataSource @Inject constructor(
     private val networkProvider: NetworkProvider
 ): IDataSource {
+
+    private val TAG = "RemoteDataSource"
+
     override suspend fun getCities(): ResultPackage<CityList> {
         val apiService = networkProvider.createApiService(ApiService::class.java)
         return when(val result = networkProvider.request(apiService::getCities)){
             is List<*> ->{
                 ResultPackage(
                     state = DataPackageState.SUCCEED,
+                    source = getCode(),
                     data = CityList(result as List<City>)
                 )
             }
@@ -36,5 +40,9 @@ class RemoteDataSource @Inject constructor(
                 )
             }
         }
+    }
+
+    override fun getCode(): String {
+        return TAG
     }
 }

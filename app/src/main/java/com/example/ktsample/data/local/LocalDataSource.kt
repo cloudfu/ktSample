@@ -13,13 +13,19 @@ class LocalDataSource @Inject constructor(
     private var sqLiteProvider: SQLiteProvider
 ): IDataSource {
 
+    private val TAG = "LocalDataSource"
+
     override suspend fun getCities(): ResultPackage<CityList> {
         val cityList = ArrayList<City>(emptyList())
         cityList.add(City("1", "LocalCity"))
         return ResultPackage(
             state = DataPackageState.SUCCEED,
+            source = getCode(),
             data = CityList(cityList)
         )
     }
 
+    override fun getCode(): String {
+        return TAG
+    }
 }

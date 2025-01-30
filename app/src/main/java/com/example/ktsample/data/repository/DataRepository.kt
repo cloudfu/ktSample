@@ -24,6 +24,7 @@ class DataRepository @Inject constructor(
 
     fun getCities(): Flow<ResultPackage<CityList>> {
         return flow {
+            emit(ResultPackage.loading())
             emit(remoteDataSource.getCities())
             emit(localDataSource.getCities())
         }.flowOn(Dispatchers.IO)

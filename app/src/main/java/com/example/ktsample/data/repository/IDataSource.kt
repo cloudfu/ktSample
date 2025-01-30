@@ -4,4 +4,5 @@ import com.example.ktsample.data.city.CityList
 
 interface IDataSource {
     suspend fun getCities(): ResultPackage<CityList>
+    fun getCode(): String
 }

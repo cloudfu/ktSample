@@ -37,12 +37,17 @@ class LoginActivity @Inject constructor(): BaseActivity() {
         })
 
         mLoginViewModel.cityList.observe(
-            this,
-            { it ->
-                for(city in it.data?.cities!!){
-                    Log.i(TAG,city.toString()) }
+            this
+        ) { it ->
+            if (it.isSucceed()) {
+
+                for (city in it.data?.cities!!) {
+                    Log.i(TAG, "${it.source}: $city")
                 }
-        )
+            } else if (it.isLoading()) {
+                Log.i(TAG, it.state.getStateMessage())
+            }
+        }
     }
 
     override fun initViewBinding() {
