@@ -1,6 +1,8 @@
-package com.example.ktsample.di
+package com.example.ktsample.data.engine
 
 import android.util.Log
+import com.example.ktsample.di.BindElectricEngine
+import com.example.ktsample.di.BindGasEngine
 import javax.inject.Inject
 
 class Truck @Inject constructor(private var driver: Driver) {

@@ -1,5 +1,8 @@
 package com.example.ktsample.di
 
+import com.example.ktsample.data.engine.ElectricEngine
+import com.example.ktsample.data.engine.Engine
+import com.example.ktsample.data.engine.GasEngine
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

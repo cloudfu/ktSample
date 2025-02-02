@@ -1,7 +1,10 @@
-package com.example.ktsample.di
+package com.example.ktsample.ui.component.engine
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.ktsample.data.engine.Driver
+import com.example.ktsample.data.engine.ElectricEngine
+import com.example.ktsample.data.engine.GasEngine
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import retrofit2.Retrofit
 import javax.inject.Inject

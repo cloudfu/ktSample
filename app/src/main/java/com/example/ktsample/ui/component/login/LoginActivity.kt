@@ -1,31 +1,51 @@
 package com.example.ktsample.ui.component.login
 
-import android.os.Bundle
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.activity.viewModels
-import androidx.compose.runtime.snapshots.Snapshot.Companion.observe
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.example.ktsample.data.login.LoginResponse
+import com.example.ktsample.data.OAUTH_CLIENT_ID
+import com.example.ktsample.data.OAUTH_REDIRECT_URI
+import com.example.ktsample.data.OAUTH_USER_SCOPE
 import com.example.ktsample.databinding.ActivityLoginBinding
-import com.example.ktsample.di.EngineViewModel
-import com.example.ktsample.di.Truck
+import com.example.ktsample.ui.component.engine.EngineViewModel
 import com.example.ktsample.ui.base.BaseActivity
+import com.example.ktsample.utils.NetworkMonitor
+import com.example.ktsample.utils.generateRandomString
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.random.Random
 
 @AndroidEntryPoint
 class LoginActivity @Inject constructor(): BaseActivity() {
 
     private val TAG = "LoginActivity"
 
-    private val mLoginViewModel: LoginViewModel by viewModels()
 //    private val mLoginViewModel: LoginViewModel by lazy{
 //        ViewModelProvider(this)[LoginViewModel::class.java]
 //    }
 
+    /***
+     * 需要在依赖注入的ViewModel添加@HiltViewModel
+     * 才能在Activity 中使用 val mLoginViewModel: LoginViewModel by viewModels()
+     * */
+    private val mLoginViewModel: LoginViewModel by viewModels()
+
+
+    /***
+     * 需要在依赖注入的ViewModel添加//@ActivityRetainedScoped
+     * 才能在Activity 中使用
+     * @Inject
+     * lateinit var mLoginViewModel: LoginViewModel
+     * */
+//    @Inject
+//    lateinit var mLoginViewModel: LoginViewModel
+
     private lateinit var mBinding : ActivityLoginBinding
+
+    @Inject
+    lateinit var networkMonitor: NetworkMonitor
 
     @Inject
     lateinit var engineViewModel: EngineViewModel
@@ -48,6 +68,10 @@ class LoginActivity @Inject constructor(): BaseActivity() {
                 Log.i(TAG, it.state.getStateMessage())
             }
         }
+
+        networkMonitor.observe(this){
+            Log.i(TAG,"network:$it.toString()")
+        }
     }
 
     override fun initViewBinding() {
@@ -59,10 +83,24 @@ class LoginActivity @Inject constructor(): BaseActivity() {
 
     private fun initEvent(){
         mBinding.btnLogin.setOnClickListener{
-            val userName: String = mBinding.txtUserName.text.trim().toString();
-            val userPwd: String = mBinding.txtUserPwd.text.trim().toString()
-            mLoginViewModel.doLogin(userName, userPwd)
+            requestTokenCode();
+//            val userName: String = mBinding.txtUserName.text.trim().toString();
+//            val userPwd: String = mBinding.txtUserPwd.text.trim().toString()
+//            mLoginViewModel.doLogin(userName, userPwd)
+//            mLoginViewModel.getAuthToken()
         }
+    }
+
+    private fun requestTokenCode(){
+        val state = generateRandomString(5)
+        val OAUTH_URL = "https://github.com/login/oauth/authorize?" +
+                "client_id=$OAUTH_CLIENT_ID" +
+                "&redirect_uri=$OAUTH_REDIRECT_URI" +
+                "&scope=$OAUTH_USER_SCOPE" +
+                "&state=$state"
+
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(OAUTH_URL))
+        startActivity(intent)
     }
 
 }
