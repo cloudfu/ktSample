@@ -59,12 +59,12 @@ class LoginActivity @Inject constructor(): BaseActivity() {
         mLoginViewModel.cityList.observe(
             this
         ) { it ->
-            if (it.isSucceed()) {
+            if (it.state.isSucceed()) {
 
                 for (city in it.data?.cities!!) {
                     Log.i(TAG, "${it.source}: $city")
                 }
-            } else if (it.isLoading()) {
+            } else if (it.state.isLoading()) {
                 Log.i(TAG, it.state.getStateMessage())
             }
         }

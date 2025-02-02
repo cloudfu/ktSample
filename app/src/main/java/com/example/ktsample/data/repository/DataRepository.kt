@@ -39,6 +39,8 @@ class DataRepository @Inject constructor(
 
     fun getOAuthToken(codeTokenRequest: OAuthTokenRequest): Flow<ResultPackage<OAuthTokenResponse>> {
         return flow {
+            emit(ResultPackage.loading())
+            kotlinx.coroutines.delay(1000)
             emit(remoteDataSource.getOAuthToken(codeTokenRequest))
         }.flowOn(Dispatchers.IO)
     }

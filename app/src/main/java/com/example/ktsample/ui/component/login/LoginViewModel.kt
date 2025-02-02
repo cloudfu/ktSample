@@ -8,6 +8,7 @@ import com.example.ktsample.data.repository.DataRepository
 import com.example.ktsample.data.city.CityList
 import com.example.ktsample.data.login.LoginResponse
 import com.example.ktsample.data.login.OAuthTokenRequest
+import com.example.ktsample.data.login.OAuthTokenResponse
 import com.example.ktsample.data.repository.ResultPackage
 import com.example.ktsample.ui.component.engine.EngineViewModel
 import com.example.ktsample.ui.base.BaseViewModel
@@ -30,6 +31,10 @@ class LoginViewModel @Inject constructor(private val dataRepository: DataReposit
     private var _cityList = MutableLiveData<ResultPackage<CityList>>()
     val cityList: LiveData<ResultPackage<CityList>> get() = _cityList
 
+    private var _oAuthToken = MutableLiveData<ResultPackage<OAuthTokenResponse>>()
+    val mOAuthTokenResponse: LiveData<ResultPackage<OAuthTokenResponse>>
+        get()= _oAuthToken
+
     @Inject
     lateinit var engineViewModel: EngineViewModel
 
@@ -50,6 +55,7 @@ class LoginViewModel @Inject constructor(private val dataRepository: DataReposit
     fun getAuthToken(codeTokenRequest: OAuthTokenRequest){
         viewModelScope.launch {
             dataRepository.getOAuthToken(codeTokenRequest).collect {
+                _oAuthToken.value = it
                 Log.i(TAG, it.data.toString())
             }
         }

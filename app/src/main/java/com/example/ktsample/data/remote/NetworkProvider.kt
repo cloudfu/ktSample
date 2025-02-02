@@ -117,7 +117,7 @@ class FormUrlEncodedResponseBodyConverter : Converter<ResponseBody, OAuthTokenRe
     override fun convert(value: ResponseBody): OAuthTokenResponse {
         val responseString = value.string()
         val params = responseString.split("&")
-        val tokenResponse: OAuthTokenResponse = OAuthTokenResponse("", "", "")
+        val tokenResponse = OAuthTokenResponse("", "", "")
 
         if (params.size == 3) {
             for (param in params) {

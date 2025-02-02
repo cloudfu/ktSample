@@ -6,11 +6,36 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main"
+    <RelativeLayout
+        android:id="@+id/token"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.component.login.OAutoTokenActivity">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <FrameLayout
+            android:id="@+id/layoutLoading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_marginTop="140.dp"
+            android:id="@+id/labUserToken"
+            android:textSize="20.sp"
+            android:text="@string/usertoken"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="50.dp" />
+
+    </RelativeLayout>
 </layout>

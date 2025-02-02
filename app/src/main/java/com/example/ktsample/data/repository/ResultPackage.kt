@@ -15,14 +15,6 @@ class ResultPackage<T>(
         }
     }
 
-    fun isSucceed(): Boolean{
-        return state == DataPackageState.SUCCEED
-    }
-
-    fun isLoading(): Boolean{
-        return state == DataPackageState.LOADING
-    }
-
     override fun toString(): String {
         return state.getStateMessage()
     }
@@ -47,5 +39,14 @@ enum class DataPackageState (val errCode: Int, private var errMsg: String = ""){
             UNKNOWN_ERROR -> "未知错误"
         }
     }
+
+    fun isSucceed(): Boolean{
+        return this == DataPackageState.SUCCEED
+    }
+
+    fun isLoading(): Boolean{
+        return this == DataPackageState.LOADING
+    }
+
 }
 
