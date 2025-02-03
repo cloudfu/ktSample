@@ -13,6 +13,7 @@ import com.example.ktsample.data.repository.ResultPackage
 import com.example.ktsample.ui.component.engine.EngineViewModel
 import com.example.ktsample.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -56,7 +57,11 @@ class LoginViewModel @Inject constructor(private val dataRepository: DataReposit
         viewModelScope.launch {
             dataRepository.getOAuthToken(codeTokenRequest).collect {
                 _oAuthToken.value = it
-                Log.i(TAG, it.data.toString())
+                if(!it.state.isLoading()){
+                    Log.i(TAG, it.data.toString())
+                }else{
+                    Log.i(TAG, "数据加载中...")
+                }
             }
         }
     }

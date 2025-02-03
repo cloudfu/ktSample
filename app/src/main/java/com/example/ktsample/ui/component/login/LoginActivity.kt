@@ -5,17 +5,18 @@ import android.net.Uri
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import com.example.ktsample.sample.coroutine.testSimpleEvent
 import com.example.ktsample.data.OAUTH_CLIENT_ID
 import com.example.ktsample.data.OAUTH_REDIRECT_URI
 import com.example.ktsample.data.OAUTH_USER_SCOPE
 import com.example.ktsample.databinding.ActivityLoginBinding
+import com.example.ktsample.sample.coroutine.testCancelFlow
 import com.example.ktsample.ui.component.engine.EngineViewModel
 import com.example.ktsample.ui.base.BaseActivity
 import com.example.ktsample.utils.NetworkMonitor
 import com.example.ktsample.utils.generateRandomString
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlin.random.Random
 
 @AndroidEntryPoint
 class LoginActivity @Inject constructor(): BaseActivity() {
@@ -75,6 +76,7 @@ class LoginActivity @Inject constructor(): BaseActivity() {
     }
 
     override fun initViewBinding() {
+        testSimpleEvent()
         mBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
         initEvent()

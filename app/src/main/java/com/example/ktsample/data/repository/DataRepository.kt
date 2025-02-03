@@ -1,5 +1,6 @@
 package com.example.ktsample.data.repository
 
+import android.util.Log
 import androidx.collection.LruCache
 import com.example.ktsample.data.city.CityList
 import com.example.ktsample.data.local.LocalDataSource
@@ -11,8 +12,11 @@ import com.example.ktsample.data.login.OAuthTokenResponse
 import com.example.ktsample.data.remote.RemoteDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import retrofit2.Retrofit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,6 +26,8 @@ class DataRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource
 ) {
+
+    private val TAG = "DataRepository"
 
     @Inject
     lateinit var mRetrofit: Retrofit
@@ -39,9 +45,19 @@ class DataRepository @Inject constructor(
 
     fun getOAuthToken(codeTokenRequest: OAuthTokenRequest): Flow<ResultPackage<OAuthTokenResponse>> {
         return flow {
-            emit(ResultPackage.loading())
             kotlinx.coroutines.delay(1000)
             emit(remoteDataSource.getOAuthToken(codeTokenRequest))
+        }.onStart {
+            emit(ResultPackage.loading())
+        }.onCompletion { cause ->
+            if (cause != null) {
+                println("flow completed exception")
+            } else {
+                println("onCompletion")
+            }
+            Log.i(TAG, "getOAuthToken completed")
+        }.catch { ex ->
+            println("catch exception: ${ex.message}")
         }.flowOn(Dispatchers.IO)
     }
 
