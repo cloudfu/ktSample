@@ -41,11 +41,11 @@ enum class DataPackageState (val errCode: Int, private var errMsg: String = ""){
     }
 
     fun isSucceed(): Boolean{
-        return this == DataPackageState.SUCCEED
+        return this == SUCCEED
     }
 
     fun isLoading(): Boolean{
-        return this == DataPackageState.LOADING
+        return this == LOADING
     }
 
 }
