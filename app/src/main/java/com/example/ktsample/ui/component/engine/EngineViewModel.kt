@@ -16,8 +16,8 @@ class EngineViewModel @Inject constructor(var driver: Driver): ViewModel() {
     lateinit var  electricEngine: ElectricEngine
     @Inject
     lateinit var gasEngine: GasEngine
-    @Inject
-    lateinit var  retrofit: Retrofit
+//    @Inject
+//    lateinit var  retrofit: Retrofit
 
     fun deliver() {
         Log.i("Truck", "Driven by ${driver.name}")
@@ -25,6 +25,6 @@ class EngineViewModel @Inject constructor(var driver: Driver): ViewModel() {
         electricEngine.shutdown()
         gasEngine.start()
         gasEngine.shutdown()
-        Log.i("Truck", retrofit.baseUrl().toString())
+//        Log.i("Truck", retrofit.baseUrl().toString())
     }
 }

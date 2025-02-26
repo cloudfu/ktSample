@@ -9,6 +9,7 @@ import com.example.ktsample.data.city.CityList
 import com.example.ktsample.data.login.OAuthCodeRequest
 import com.example.ktsample.data.login.OAuthTokenRequest
 import com.example.ktsample.data.login.OAuthTokenResponse
+import com.example.ktsample.data.pokemon.Pokemon
 import com.example.ktsample.data.repository.DataPackageState
 import com.example.ktsample.data.repository.IDataSource
 import okhttp3.Response
@@ -69,7 +70,8 @@ class RemoteDataSource @Inject constructor(
             oAuthTokenRequest.clientId,
             oAuthTokenRequest.clientSecret,
             oAuthTokenRequest.code,
-            oAuthTokenRequest.redirectUri)
+            oAuthTokenRequest.redirectUri
+        )
         Log.i("TAG",response.toString())
         return ResultPackage(
             data = response,
@@ -101,6 +103,17 @@ class RemoteDataSource @Inject constructor(
 
 
 
+    }
+
+    override suspend fun fetchPokemonList(pageIndex: Int): List<Pokemon> {
+        val apiService = networkProvider.createApiService(ApiService::class.java)
+
+        try {
+            val response = apiService.fetchPokemonList(pageIndex,20)
+            var resultCode = response.count
+        } catch (_: IOException) {
+        }
+        return emptyList<Pokemon>()
     }
 
     override fun getCode(): String {

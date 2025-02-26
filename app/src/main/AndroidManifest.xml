@@ -19,6 +19,9 @@
         android:theme="@style/Theme.AppCompat"
         tools:targetApi="31">
         <activity
+            android:name=".ui.component.list.RecyclerViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.component.login.LoginActivity"
             android:exported="true">
             <intent-filter>
@@ -27,13 +30,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ui.component.login.OAutoTokenActivity"
-            android:exported="true" >
+        <activity
+            android:name=".ui.component.login.OAutoTokenActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="getCallbackCode"
                     android:scheme="ktsample" />

@@ -13,6 +13,7 @@ import com.example.ktsample.databinding.ActivityLoginBinding
 import com.example.ktsample.sample.coroutine.testCancelFlow
 import com.example.ktsample.ui.component.engine.EngineViewModel
 import com.example.ktsample.ui.base.BaseActivity
+import com.example.ktsample.ui.component.list.ListPokemonViewModel
 import com.example.ktsample.utils.NetworkMonitor
 import com.example.ktsample.utils.generateRandomString
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,6 +33,7 @@ class LoginActivity @Inject constructor(): BaseActivity() {
      * 才能在Activity 中使用 val mLoginViewModel: LoginViewModel by viewModels()
      * */
     private val mLoginViewModel: LoginViewModel by viewModels()
+    private val mListPokemonViewModel: ListPokemonViewModel by viewModels()
 
 
     /***
@@ -85,7 +87,9 @@ class LoginActivity @Inject constructor(): BaseActivity() {
 
     private fun initEvent(){
         mBinding.btnLogin.setOnClickListener{
-            requestTokenCode();
+            mListPokemonViewModel.fetchNextPokemonList()
+
+//            requestTokenCode();
 //            val userName: String = mBinding.txtUserName.text.trim().toString();
 //            val userPwd: String = mBinding.txtUserPwd.text.trim().toString()
 //            mLoginViewModel.doLogin(userName, userPwd)

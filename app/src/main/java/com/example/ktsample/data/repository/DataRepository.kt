@@ -9,6 +9,7 @@ import com.example.ktsample.data.login.LoginResponse
 import com.example.ktsample.data.login.OAuthCodeRequest
 import com.example.ktsample.data.login.OAuthTokenRequest
 import com.example.ktsample.data.login.OAuthTokenResponse
+import com.example.ktsample.data.pokemon.Pokemon
 import com.example.ktsample.data.remote.RemoteDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -29,9 +30,6 @@ class DataRepository @Inject constructor(
 
     private val TAG = "DataRepository"
 
-    @Inject
-    lateinit var mRetrofit: Retrofit
-
     /***
      * 获取城市列表
      */
@@ -43,6 +41,9 @@ class DataRepository @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
+    /***
+     *
+     */
     fun getOAuthToken(codeTokenRequest: OAuthTokenRequest): Flow<ResultPackage<OAuthTokenResponse>> {
         return flow {
             kotlinx.coroutines.delay(1000)
@@ -61,6 +62,21 @@ class DataRepository @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
+    /***
+     *
+     */
+    fun fetchPokemonList(
+        page: Int,
+        onSuccess: () -> Unit,
+        onStart: () -> Unit,
+        onComplete: () -> Unit,
+        onError: (String) -> Unit
+
+    ) = flow<List<Pokemon>> {
+        remoteDataSource.fetchPokemonList(0)
+    }.onStart { onStart() }.onCompletion { onComplete() }
+
+
     fun doLogin(request: LoginRequest): Flow<LoginResponse>{
         return flow{
 
@@ -74,17 +90,17 @@ class DataRepository @Inject constructor(
     /***
      * 获取远程数据接口服务
      */
-    fun <T> getRemoteService(service: Class<T>): T {
-        var retrofitService = mRetrofitServiceCache[service] as? T
-        if (retrofitService == null) {
-            // TODO: synchronized(mRetrofit)
-            synchronized(mRetrofitServiceCache) {
-                retrofitService = mRetrofit.create(service)
-                mRetrofitServiceCache.put(service, retrofitService!!)
-            }
-        }
-        return retrofitService!!
-    }
+//    fun <T> getRemoteService(service: Class<T>): T {
+//        var retrofitService = mRetrofitServiceCache[service] as? T
+//        if (retrofitService == null) {
+//            // TODO: synchronized(mRetrofit)
+//            synchronized(mRetrofitServiceCache) {
+//                retrofitService = mRetrofit.create(service)
+//                mRetrofitServiceCache.put(service, retrofitService!!)
+//            }
+//        }
+//        return retrofitService!!
+//    }
 
     /***
      * 获取本地数据接口服务

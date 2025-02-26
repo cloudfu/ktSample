@@ -6,7 +6,10 @@ import android.net.Proxy
 import android.util.Log
 import com.example.ktsample.data.api.OAuthApiService
 import com.example.ktsample.data.login.OAuthTokenResponse
+import com.example.ktsample.data.pokemon.PokemonResponse
 import dagger.hilt.android.qualifiers.ApplicationContext
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -15,6 +18,7 @@ import retrofit2.Converter
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
 import java.lang.reflect.Type
 import java.net.InetSocketAddress
@@ -50,6 +54,34 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
         chain.proceed(request)
     }
 
+//    var baseUrlStr: String = "https://github.com/"
+    var baseUrlStr: String = "https://pokeapi.co/api/v2/"
+
+    var baseUrl = Interceptor { chain ->
+//        val original = chain.request()
+//        val request = original.newBuilder()
+//            .header("Content-Type", "application/json")
+//            .method(original.method, original.body)
+//            .build()
+//        chain.proceed(request)
+
+
+        val originalRequest = chain.request()
+        val originalUrl = originalRequest.url
+
+        val newUrl = baseUrlStr.toHttpUrlOrNull()
+            ?.newBuilder()
+            ?.encodedPath(originalUrl.encodedPath)
+            ?.query(originalUrl.encodedQuery)
+            ?.build()
+
+        val newRequest = originalRequest.newBuilder()
+            .url(newUrl!!)
+            .build()
+
+        chain.proceed(newRequest)
+    }
+
     init{
 //        val proxyAddress = InetSocketAddress("127.0.0.1", 7897)
 //        val proxy = java.net.Proxy(java.net.Proxy.Type.HTTP, proxyAddress)
@@ -58,6 +90,7 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
 //        okHttpBuilder.proxy(proxy)
         okHttpBuilder.addInterceptor(httpLogger)
         okHttpBuilder.addInterceptor(httpHeader)
+        okHttpBuilder.addInterceptor(baseUrl)
         okHttpBuilder.connectTimeout(CONNECT_TIMEOUT.toLong(), TimeUnit.SECONDS)
         okHttpBuilder.readTimeout(CONNECT_TIMEOUT.toLong(), TimeUnit.SECONDS)
         okHttpBuilder.writeTimeout(CONNECT_TIMEOUT.toLong(), TimeUnit.SECONDS)
@@ -66,6 +99,7 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
         mRetrofit = Retrofit.Builder()
             .client(okHttpBuilder.build())
             .baseUrl(BASE_URL)
+//            .addConverterFactory(MoshiConverterFactory.create())
             .addConverterFactory(FormUrlEncodedConverterFactory())
             .build()
     }
@@ -106,15 +140,15 @@ class FormUrlEncodedConverterFactory : Converter.Factory() {
         annotations: Array<out Annotation>,
         retrofit: Retrofit
     ): Converter<ResponseBody, *>? {
-        if (type == OAuthTokenResponse::class.java) {
+        if (type == PokemonResponse::class.java) {
             return FormUrlEncodedResponseBodyConverter()
         }
         return null
     }
 }
 
-class FormUrlEncodedResponseBodyConverter : Converter<ResponseBody, OAuthTokenResponse> {
-    override fun convert(value: ResponseBody): OAuthTokenResponse {
+class FormUrlEncodedResponseBodyConverter : Converter<ResponseBody, PokemonResponse> {
+    override fun convert(value: ResponseBody): PokemonResponse {
         val responseString = value.string()
         val params = responseString.split("&")
         val tokenResponse = OAuthTokenResponse("", "", "")
@@ -132,6 +166,6 @@ class FormUrlEncodedResponseBodyConverter : Converter<ResponseBody, OAuthTokenRe
             }
         }
         Log.i("TAG", tokenResponse.toString())
-        return tokenResponse
+        return PokemonResponse()
     }
 }

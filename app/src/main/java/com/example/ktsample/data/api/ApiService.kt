@@ -3,11 +3,13 @@ package com.example.ktsample.data.api
 import com.example.ktsample.data.repository.ResultPackage
 import com.example.ktsample.data.city.City
 import com.example.ktsample.data.login.LoginResponse
+import com.example.ktsample.data.pokemon.PokemonResponse
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -21,6 +23,12 @@ interface ApiService {
 
     @GET("api/auth/login.json")
     suspend fun login(userName: String, userPwd: String): Response<LoginResponse>
+
+    @GET("pokemon")
+    suspend fun fetchPokemonList(
+        @Query("limit") limit: Int = 20,
+        @Query("offset") offset: Int = 0,
+    ): PokemonResponse
 
     // 动态Head添加
 //    @GET("data")
