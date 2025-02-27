@@ -29,6 +29,11 @@ class ListPokemonViewModel @Inject constructor(private val dataRepository: DataR
                 toastMessage = errMsg
             }
         ))
+
+    }
+
+    fun fetchNextPokemonLst(){
+        pokemonPageIndex.value = 1
     }
 
     /***
