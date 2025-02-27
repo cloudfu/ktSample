@@ -1,18 +1,15 @@
 package com.example.ktsample.data.remote
 
 import android.util.Log
-import androidx.browser.customtabs.CustomTabsIntent
 import com.example.ktsample.data.api.ApiService
 import com.example.ktsample.data.api.OAuthApiService
 import com.example.ktsample.data.repository.ResultPackage
 import com.example.ktsample.data.city.CityList
-import com.example.ktsample.data.login.OAuthCodeRequest
 import com.example.ktsample.data.login.OAuthTokenRequest
 import com.example.ktsample.data.login.OAuthTokenResponse
 import com.example.ktsample.data.pokemon.Pokemon
 import com.example.ktsample.data.repository.DataPackageState
 import com.example.ktsample.data.repository.IDataSource
-import okhttp3.Response
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -105,12 +102,13 @@ class RemoteDataSource @Inject constructor(
 
     }
 
-    override suspend fun fetchPokemonList(pageIndex: Int): List<Pokemon> {
+    override suspend fun fetchPokemonList(page: Int): List<Pokemon> {
         val apiService = networkProvider.createApiService(ApiService::class.java)
 
         try {
-            val response = apiService.fetchPokemonList(pageIndex,20)
+            val response = apiService.fetchPokemonList(page,20)
             var resultCode = response.count
+            return response.results
         } catch (_: IOException) {
         }
         return emptyList<Pokemon>()

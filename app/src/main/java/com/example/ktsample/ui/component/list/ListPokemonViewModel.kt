@@ -1,5 +1,6 @@
 package com.example.ktsample.ui.component.list
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ktsample.data.repository.DataRepository
@@ -45,7 +46,9 @@ class ListPokemonViewModel @Inject constructor(private val dataRepository: DataR
                         toastMessage = errMsg
                     }
                 ).collect{
-
+                    var pokemonList = it;
+                    var count = pokemonList.size
+                    Log.i("count", count.toString())
                 }
             }
         }

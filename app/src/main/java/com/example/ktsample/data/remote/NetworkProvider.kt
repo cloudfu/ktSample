@@ -29,8 +29,11 @@ import javax.inject.Singleton
 @Singleton
 class NetworkProvider @Inject constructor(@ApplicationContext val context: Context){
 
-//    val BASE_URL = "https://jenly1314.gitlab.io/"
-    val BASE_URL = "https://github.com/"
+//    val BASE_URL = "https://jenly1314.gitlab.io"
+//    val BASE_URL = "https://github.com/"
+    val BASE_URL = "https://pokeapi.co/api/v2/"
+
+
     val NO_INTERNET_CONNECTION_CODE = "1000"
     val NETWORK_ERROR_CODE = "1001"
     val CONNECT_TIMEOUT = 30   //In seconds
@@ -90,7 +93,7 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
 //        okHttpBuilder.proxy(proxy)
         okHttpBuilder.addInterceptor(httpLogger)
         okHttpBuilder.addInterceptor(httpHeader)
-        okHttpBuilder.addInterceptor(baseUrl)
+//        okHttpBuilder.addInterceptor(baseUrl)
         okHttpBuilder.connectTimeout(CONNECT_TIMEOUT.toLong(), TimeUnit.SECONDS)
         okHttpBuilder.readTimeout(CONNECT_TIMEOUT.toLong(), TimeUnit.SECONDS)
         okHttpBuilder.writeTimeout(CONNECT_TIMEOUT.toLong(), TimeUnit.SECONDS)
@@ -99,8 +102,10 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
         mRetrofit = Retrofit.Builder()
             .client(okHttpBuilder.build())
             .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
 //            .addConverterFactory(MoshiConverterFactory.create())
-            .addConverterFactory(FormUrlEncodedConverterFactory())
+
+//            .addConverterFactory(FormUrlEncodedConverterFactory())
             .build()
     }
 
@@ -147,8 +152,8 @@ class FormUrlEncodedConverterFactory : Converter.Factory() {
     }
 }
 
-class FormUrlEncodedResponseBodyConverter : Converter<ResponseBody, PokemonResponse> {
-    override fun convert(value: ResponseBody): PokemonResponse {
+class FormUrlEncodedResponseBodyConverter : Converter<ResponseBody, OAuthTokenResponse> {
+    override fun convert(value: ResponseBody): OAuthTokenResponse {
         val responseString = value.string()
         val params = responseString.split("&")
         val tokenResponse = OAuthTokenResponse("", "", "")
@@ -166,6 +171,6 @@ class FormUrlEncodedResponseBodyConverter : Converter<ResponseBody, PokemonRespo
             }
         }
         Log.i("TAG", tokenResponse.toString())
-        return PokemonResponse()
+        return tokenResponse
     }
 }
