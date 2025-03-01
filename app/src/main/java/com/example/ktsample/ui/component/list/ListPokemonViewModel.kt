@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -44,7 +45,7 @@ class ListPokemonViewModel @Inject constructor(private val dataRepository: DataR
     init{
         viewModelScope.launch {
             pokemonPageIndex.map { pageIndex ->
-                dataRepository.fetchPokemonList(
+                val result = dataRepository.fetchPokemonList(
                     page = pageIndex,
                     onStart = { isLoading = true },
                     onSuccess = { isLoading = false },
@@ -53,8 +54,10 @@ class ListPokemonViewModel @Inject constructor(private val dataRepository: DataR
                         toastMessage = errMsg
                     }
                 ).collect{
-                    pokemonList.value = it
+                    println(it.size)
                 }
+//                var list = result.single()
+//                println(list)
             }.collect()
         }
     }
