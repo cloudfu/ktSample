@@ -87,7 +87,8 @@ class LoginActivity @Inject constructor(): BaseActivity() {
 
     private fun initEvent(){
         mBinding.btnLogin.setOnClickListener{
-            mListPokemonViewModel.fetchNextPokemonList()
+//            mListPokemonViewModel.fetchNextPokemonList()
+            mListPokemonViewModel.fetchNextPokemonLst()
 
 //            requestTokenCode();
 //            val userName: String = mBinding.txtUserName.text.trim().toString();
