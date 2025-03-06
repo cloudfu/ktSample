@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ktsample.data.pokemon.Pokemon
 import com.example.ktsample.data.repository.DataRepository
+import com.example.ktsample.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,57 +22,60 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ListPokemonViewModel @Inject constructor(private val dataRepository: DataRepository) : ViewModel(){
+class ListPokemonViewModel @Inject constructor(private val dataRepository: DataRepository) : BaseViewModel(){
 
     var isLoading: Boolean = false
         private set
     var toastMessage: String = ""
         private set
     private val pokemonPageIndex: MutableStateFlow<Int> = MutableStateFlow(0)
-    private var pokemonList: MutableLiveData<List<Pokemon>> = MutableLiveData()
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    private val pokemonListFlow = pokemonPageIndex.flatMapLatest { pageIndex ->
-//        dataRepository.fetchPokemonList(
-//            page = pageIndex,
-//            onStart = {isLoading = true},
-//            onSuccess = {isLoading = false},
-//            onComplete = {isLoading = false},
-//            onError = { errMsg ->
-//                toastMessage = errMsg
-//            }
-//        )
-//    }
 
-    init{
-        viewModelScope.launch {
-            pokemonPageIndex.map { pageIndex ->
-                val result = dataRepository.fetchPokemonList(
-                    page = pageIndex,
-                    onStart = { isLoading = true },
-                    onSuccess = { isLoading = false },
-                    onComplete = { isLoading = false },
-                    onError = { errMsg ->
-                        toastMessage = errMsg
-                    }
-                ).collect{
-                    println(it.size)
-                }
-//                var list = result.single()
-//                println(list)
-            }.collect()
-        }
+    private val pokemonListFlow = pokemonPageIndex.flatMapLatest { pageIndex ->
+        dataRepository.fetchPokemonList(
+            page = pageIndex,
+            onStart = {isLoading = true},
+            onSuccess = {isLoading = false},
+            onComplete = {isLoading = false},
+            onError = { errMsg ->
+                toastMessage = errMsg
+            }
+        )
     }
 
-    fun fetchNextPokemonLst(){
+    private val pokemonList: List<Pokemon> by pokemonListFlow.bindProperty(viewModelScope, emptyList())
+
+
+    init{
+//        viewModelScope.launch {
+//            pokemonPageIndex.flatMapLatest { pageIndex ->
+//                dataRepository.fetchPokemonList(
+//                    page = pageIndex,
+//                    onStart = { isLoading = true },
+//                    onSuccess = { isLoading = false },
+//                    onComplete = { isLoading = false },
+//                    onError = { errMsg ->
+//                        toastMessage = errMsg
+//                    }
+//                )
+////                var list = result.single()
+////                println(list)
+//            }.collect{
+//                println(it.size)
+//            }
+//        }
+    }
+
+    fun fetchNextPokemonList(){
         if (!isLoading) {
             pokemonPageIndex.value++
+            println(pokemonList.size)
         }
     }
 
     /***
      * 请求下一页，翻页
      */
-    fun fetchNextPokemonList(){
+    fun fetchNextPokemonList1(){
         if(!isLoading){
             viewModelScope.launch {
                 dataRepository.fetchPokemonList(

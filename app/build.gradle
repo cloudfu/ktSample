@@ -79,6 +79,9 @@ dependencies {
 
     //Compose
     implementation 'androidx.constraintlayout:constraintlayout-compose:1.1.0'
+
+    //recycleView
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
 }
 
 // Allow references to generated code

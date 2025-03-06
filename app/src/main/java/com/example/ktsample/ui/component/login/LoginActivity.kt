@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView.Recycler
 import com.example.ktsample.sample.coroutine.testSimpleEvent
 import com.example.ktsample.data.OAUTH_CLIENT_ID
 import com.example.ktsample.data.OAUTH_REDIRECT_URI
@@ -14,6 +15,7 @@ import com.example.ktsample.sample.coroutine.testCancelFlow
 import com.example.ktsample.ui.component.engine.EngineViewModel
 import com.example.ktsample.ui.base.BaseActivity
 import com.example.ktsample.ui.component.list.ListPokemonViewModel
+import com.example.ktsample.ui.component.list.RecyclerViewActivity
 import com.example.ktsample.utils.NetworkMonitor
 import com.example.ktsample.utils.generateRandomString
 import dagger.hilt.android.AndroidEntryPoint
@@ -88,7 +90,8 @@ class LoginActivity @Inject constructor(): BaseActivity() {
     private fun initEvent(){
         mBinding.btnLogin.setOnClickListener{
 //            mListPokemonViewModel.fetchNextPokemonList()
-            mListPokemonViewModel.fetchNextPokemonLst()
+//            mListPokemonViewModel.fetchNextPokemonLst()
+            this.startActivity(Intent(this, RecyclerViewActivity::class.java))
 
 //            requestTokenCode();
 //            val userName: String = mBinding.txtUserName.text.trim().toString();
