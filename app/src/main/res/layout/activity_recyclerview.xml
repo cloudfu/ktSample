@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.ktsample.ui.component.list.ListPokemonViewModel" />
+
+        <variable
+            name="listAdapter"
+            type="com.example.ktsample.ui.component.list.PokemonListAdapter" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.component.list.RecyclerViewActivity">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fadeScrollbars="false"
+            android:padding="6dp"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical"
+            app:adapter="@{listAdapter}"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:spanCount="2"
+            app:paginationPokemonList="@{viewModel}"
+            app:submitList="@{viewModel.pokemonList}"
+            app:toast="@{viewModel.toastMessage}"
+            tools:listitem="@layout/viewholder_pokemon_item" />
+
+<!--        <Button-->
+<!--            android:id="@+id/button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Button"-->
+<!--            tools:layout_editor_absoluteX="37dp"-->
+<!--            tools:layout_editor_absoluteY="29dp"-->
+<!--            tools:ignore="MissingConstraints" />-->
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

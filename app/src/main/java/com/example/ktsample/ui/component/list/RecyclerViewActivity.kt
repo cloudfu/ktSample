@@ -1,17 +1,19 @@
 package com.example.ktsample.ui.component.list
 
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.View
 import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 import com.example.ktsample.R
-import com.example.ktsample.databinding.ActivityRecyclerViewBinding
+import com.example.ktsample.databinding.ActivityRecyclerviewBinding
 import com.example.ktsample.ui.base.BindingActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RecyclerViewActivity @Inject constructor(): BindingActivity<ActivityRecyclerViewBinding>(R.layout.activity_recycler_view) {
+class RecyclerViewActivity @Inject constructor(): BindingActivity<ActivityRecyclerviewBinding>(R.layout.activity_recyclerview) {
+
+    private val vm: ListPokemonViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.init()
@@ -21,10 +23,19 @@ class RecyclerViewActivity @Inject constructor(): BindingActivity<ActivityRecycl
 
     private fun init(){
         binding{
-            mBinding.button.setOnClickListener{
-                mListPokemonViewModel.fetchNextPokemonList()
-            }
+            viewModel = vm
+            listAdapter = PokemonListAdapter()
+//            button.setOnClickListener{
+//                mListPokemonViewModel.fetchNextPokemonList()
+//            }
         }
-    }
 
+        this.vm.pokemonList.observe(this, Observer {
+            binding{
+                val adapter = PokemonListAdapter()
+                recyclerView.adapter = adapter
+                adapter.submitList(it)
+            }
+        })
+    }
 }
