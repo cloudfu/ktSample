@@ -33,7 +33,10 @@ object RecyclerViewBinding {
         RecyclerViewPaginator(
             recyclerView = view,
             isLoading = { viewModel.isLoading },
-            loadMore = { viewModel.fetchNextPokemonList() },
+            loadMore = {
+                println("page:$it")
+//                viewModel.fetchNextPokemonList()
+                       },
             onLast = { false },
         ).run {
             threshold = 8
@@ -45,4 +48,6 @@ object RecyclerViewBinding {
     fun bindToast(view: View, text: String?) {
         Toast.makeText(view.context, text, Toast.LENGTH_SHORT).show()
     }
+
+
 }

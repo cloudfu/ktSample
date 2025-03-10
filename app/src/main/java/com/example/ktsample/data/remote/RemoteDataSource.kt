@@ -106,7 +106,9 @@ class RemoteDataSource @Inject constructor(
         val apiService = networkProvider.createApiService(ApiService::class.java)
 
         try {
-            val response = apiService.fetchPokemonList(page,20)
+            val pageSize  = 40
+            val rows = (page + 1 ) * pageSize
+            val response = apiService.fetchPokemonList(0,rows)
             var resultCode = response.count
             return response.results
         } catch (_: IOException) {

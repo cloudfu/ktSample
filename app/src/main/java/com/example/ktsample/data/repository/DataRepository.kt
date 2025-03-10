@@ -73,7 +73,7 @@ class DataRepository @Inject constructor(
         onError: (String) -> Unit
 
     ) = flow<List<Pokemon>> {
-        emit(remoteDataSource.fetchPokemonList(0))
+        emit(remoteDataSource.fetchPokemonList(page))
         }.onStart { onStart()
         }.onCompletion { onComplete()
         }.flowOn(Dispatchers.IO)

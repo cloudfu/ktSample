@@ -21,6 +21,16 @@ class RecyclerViewPaginator(
         recyclerView.addOnScrollListener(this)
     }
 
+    /***
+     *         RecyclerViewPaginator(
+     *             recyclerView = view,
+     *             isLoading = { viewModel.isLoading },
+     *             loadMore = { viewModel.fetchNextPokemonList() },
+     *             onLast = { false },
+     *         ).run {
+     *             threshold = 8
+     *         }
+     */
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
 
