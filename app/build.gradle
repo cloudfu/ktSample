@@ -5,6 +5,9 @@ plugins {
     id("org.jetbrains.kotlin.plugin.parcelize")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+//    alias(libs.plugins.ksp)
+
+//    id("com.google.devtools.ksp") version "1.9.25-1.0.20"
 }
 
 android {
@@ -19,6 +22,13 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // The schemas directory contains a schema file for each version of the Room database.
+        // This is required to enable Room auto migrations.
+        // See https://developer.android.com/reference/kotlin/androidx/room/AutoMigration.
+//        ksp {
+//            arg("room.schemaLocation", "$projectDir/schemas")
+//        }
     }
 
     buildTypes {
@@ -82,6 +92,15 @@ dependencies {
 
     //recycleView
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
+
+    //room
+    def room_version = "2.6.1"
+    implementation "androidx.room:room-runtime:2.6.1"
+    kapt "androidx.room:room-compiler:2.6.1"
+    // 如果使用 Kotlin 协程，添加以下依赖
+    implementation "androidx.room:room-ktx:2.6.1"
+    // 如果使用 LiveData，添加以下依赖
+//    implementation "androidx.room:room-livedata:2.4.3"
 }
 
 // Allow references to generated code
