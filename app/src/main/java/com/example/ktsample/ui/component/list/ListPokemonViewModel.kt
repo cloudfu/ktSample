@@ -1,11 +1,14 @@
 package com.example.ktsample.ui.component.list
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ktsample.data.local.DatabaseProvider
 import com.example.ktsample.data.pokemon.Pokemon
+import com.example.ktsample.data.pokemon.PokemonEntity
 import com.example.ktsample.data.repository.DataRepository
 import com.example.ktsample.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -63,6 +66,29 @@ class ListPokemonViewModel @Inject constructor(private val dataRepository: DataR
             }.collect{
                 pokemonList.value = it
                 println(it.size)
+            }
+        }
+    }
+
+    fun initDatabase(context: Context){
+        viewModelScope.launch {
+            val database = DatabaseProvider.getDatabase(context)
+            val pokemonDao = database.pokemonDao()
+
+            // 插入用户
+            val newPokemon = PokemonEntity(name = "John")
+            val userId = pokemonDao.insertPokemon(newPokemon)
+
+            // 查询所有用户
+            val allUsers = pokemonDao.getAllPokemon()
+            for (user in allUsers) {
+                println("id: ${user.id}, name: ${user.name}")
+            }
+
+            // 根据 ID 查询用户
+            val user = pokemonDao.getPokemonById(userId.toInt())
+                user?.let {
+                println("User by id: ${it.id}, vs: ${it.name}")
             }
         }
     }
