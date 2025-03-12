@@ -30,8 +30,8 @@ import javax.inject.Singleton
 class NetworkProvider @Inject constructor(@ApplicationContext val context: Context){
 
 //    val BASE_URL = "https://jenly1314.gitlab.io"
-//    val BASE_URL = "https://github.com/"
-    val BASE_URL = "https://pokeapi.co/api/v2/"
+    val BASE_URL = "https://github.com/"
+//    val BASE_URL = "https://pokeapi.co/api/v2/"
 
 
     val NO_INTERNET_CONNECTION_CODE = "1000"
@@ -57,8 +57,8 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
         chain.proceed(request)
     }
 
-//    var baseUrlStr: String = "https://github.com/"
-    var baseUrlStr: String = "https://pokeapi.co/api/v2/"
+    var baseUrlStr: String = "https://github.com/"
+//    var baseUrlStr: String = "https://pokeapi.co/api/v2/"
 
     var baseUrl = Interceptor { chain ->
 //        val original = chain.request()
@@ -102,10 +102,10 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
         mRetrofit = Retrofit.Builder()
             .client(okHttpBuilder.build())
             .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+//            .addConverterFactory(GsonConverterFactory.create())
 //            .addConverterFactory(MoshiConverterFactory.create())
 
-//            .addConverterFactory(FormUrlEncodedConverterFactory())
+            .addConverterFactory(FormUrlEncodedConverterFactory())
             .build()
     }
 
@@ -145,7 +145,7 @@ class FormUrlEncodedConverterFactory : Converter.Factory() {
         annotations: Array<out Annotation>,
         retrofit: Retrofit
     ): Converter<ResponseBody, *>? {
-        if (type == PokemonResponse::class.java) {
+        if (type == OAuthTokenResponse::class.java) {
             return FormUrlEncodedResponseBodyConverter()
         }
         return null

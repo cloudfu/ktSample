@@ -6,11 +6,11 @@ import androidx.databinding.DataBindingComponent
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding;
 
-abstract class BindingActivity<T : ViewDataBinding> constructor(
+abstract class BindingActivity<T : ViewDataBinding> (
     @LayoutRes private val layoutId: Int,
 ) : AppCompatActivity() {
 
-    protected var mBindingComponent: DataBindingComponent? = DataBindingUtil.getDefaultComponent()
+    private var mBindingComponent: DataBindingComponent? = DataBindingUtil.getDefaultComponent()
     protected val mBinding: T by lazy(LazyThreadSafetyMode.NONE) {
         DataBindingUtil.setContentView(this, layoutId, mBindingComponent)
     }

@@ -27,17 +27,16 @@
                 android:layout_gravity="center"
                 android:indeterminate="true" />
         </FrameLayout>
-
         <TextView
             android:layout_marginTop="100.dp"
             android:id="@+id/labTitle"
-            android:text="UserLogin"
+            android:text="Github OAuth"
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="50.dp" />
 
         <EditText
-            android:id="@+id/txtUserName"
+            android:id="@+id/txtClientId"
             android:layout_below="@+id/labTitle"
             android:layout_width="match_parent"
             android:layout_height="50.dp"
@@ -45,11 +44,15 @@
             android:inputType="textEmailAddress" />
 
         <EditText
-            android:id="@+id/txtUserPwd"
-            android:layout_below="@+id/txtUserName"
+            android:id="@+id/redirectUri"
+            android:layout_below="@+id/txtClientId"
             android:layout_width="match_parent"
             android:layout_height="50.dp" />
-
+        <EditText
+            android:id="@+id/txtUserPwd"
+            android:layout_below="@+id/redirectUri"
+            android:layout_width="match_parent"
+            android:layout_height="50.dp" />
         <Button
             android:id="@+id/btnLogin"
             android:layout_below="@+id/txtUserPwd"

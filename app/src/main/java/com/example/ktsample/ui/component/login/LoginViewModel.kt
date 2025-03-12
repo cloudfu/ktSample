@@ -15,6 +15,7 @@ import com.example.ktsample.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,10 +48,28 @@ class LoginViewModel @Inject constructor(private val dataRepository: DataReposit
         engineViewModel.deliver()
         viewModelScope.launch {
             dataRepository.getCities().collect {
-                Log.i(TAG, "${it.state}: $it")
+                Timber.i("${it.state}: $it")
                 _cityList.value = it
             }
         }
+    }
+
+    fun getGithubOAuthUrl(
+        clientId: String,
+        redirectUri: String,
+        userScope: String,
+        state: String): String{
+
+        clientId.takeIf { it.isNotEmpty() } ?: return ""
+        redirectUri.takeIf { it.isNotEmpty() } ?: return ""
+        userScope.takeIf { it.isNotEmpty() } ?: return ""
+        state.takeIf { it.isNotEmpty() } ?: return ""
+
+        return "https://github.com/login/oauth/authorize?" +
+            "client_id=$clientId" +
+            "&redirect_uri=$redirectUri" +
+            "&scope=$userScope" +
+            "&state=$state"
     }
 
     fun getAuthToken(codeTokenRequest: OAuthTokenRequest){
@@ -58,9 +77,9 @@ class LoginViewModel @Inject constructor(private val dataRepository: DataReposit
             dataRepository.getOAuthToken(codeTokenRequest).collect {
                 _oAuthToken.value = it
                 if(!it.state.isLoading()){
-                    Log.i(TAG, it.data.toString())
+                    Timber.d(it.data.toString())
                 }else{
-                    Log.i(TAG, "数据加载中...")
+                    Timber.d("Loading...")
                 }
             }
         }

@@ -2,41 +2,35 @@ package com.example.ktsample.ui.component.login
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView.Recycler
+import com.example.ktsample.R
 import com.example.ktsample.sample.coroutine.testSimpleEvent
 import com.example.ktsample.data.OAUTH_CLIENT_ID
+import com.example.ktsample.data.OAUTH_CLIENT_SECRET
 import com.example.ktsample.data.OAUTH_REDIRECT_URI
 import com.example.ktsample.data.OAUTH_USER_SCOPE
 import com.example.ktsample.databinding.ActivityLoginBinding
 import com.example.ktsample.sample.coroutine.testCancelFlow
 import com.example.ktsample.ui.component.engine.EngineViewModel
 import com.example.ktsample.ui.base.BaseActivity
+import com.example.ktsample.ui.base.BindingActivity
 import com.example.ktsample.ui.component.list.ListPokemonViewModel
 import com.example.ktsample.ui.component.list.RecyclerViewActivity
 import com.example.ktsample.utils.NetworkMonitor
-import com.example.ktsample.utils.generateRandomString
+import com.example.ktsample.utils.genRandomString
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LoginActivity @Inject constructor(): BaseActivity() {
+class LoginActivity @Inject constructor(): BindingActivity<ActivityLoginBinding>(R.layout.activity_login) {
 
     private val TAG = "LoginActivity"
-
-//    private val mLoginViewModel: LoginViewModel by lazy{
-//        ViewModelProvider(this)[LoginViewModel::class.java]
-//    }
-
-    /***
-     * 需要在依赖注入的ViewModel添加@HiltViewModel
-     * 才能在Activity 中使用 val mLoginViewModel: LoginViewModel by viewModels()
-     * */
-    private val mLoginViewModel: LoginViewModel by viewModels()
-    private val mListPokemonViewModel: ListPokemonViewModel by viewModels()
-
 
     /***
      * 需要在依赖注入的ViewModel添加//@ActivityRetainedScoped
@@ -47,72 +41,33 @@ class LoginActivity @Inject constructor(): BaseActivity() {
 //    @Inject
 //    lateinit var mLoginViewModel: LoginViewModel
 
-    private lateinit var mBinding : ActivityLoginBinding
+    /***
+     * 需要在依赖注入的ViewModel添加@HiltViewModel
+     * 才能在Activity 中使用 val mLoginViewModel: LoginViewModel by viewModels()
+     * */
+    private val mViewModel: LoginViewModel by viewModels()
 
-    @Inject
-    lateinit var networkMonitor: NetworkMonitor
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        this.init()
+    }
 
-    @Inject
-    lateinit var engineViewModel: EngineViewModel
+    private fun init(){
+        binding {
+            btnLogin.setOnClickListener(View.OnClickListener {
 
-    override fun observeViewModel() {
-        // TODO: Observer()
-        mLoginViewModel.loginResponse.observe(this, Observer() {
-            Log.i(TAG, it.toString())
-        })
+//                github OAuth Setting
+//                github/setting/Developer settings/OAuth App
+//                Authorization callback URL: ktsample://getCallbackCode
+//                val OAUTH_REDIRECT_URI = "ktsample://getCallbackCode"
 
-        mLoginViewModel.cityList.observe(
-            this
-        ) { it ->
-            if (it.state.isSucceed()) {
-
-                for (city in it.data?.cities!!) {
-                    Log.i(TAG, "${it.source}: $city")
-                }
-            } else if (it.state.isLoading()) {
-                Log.i(TAG, it.state.getStateMessage())
-            }
-        }
-
-        networkMonitor.observe(this){
-            Log.i(TAG,"network:$it.toString()")
+                val githubOAthUri = mViewModel.getGithubOAuthUrl(
+                    OAUTH_CLIENT_ID, OAUTH_REDIRECT_URI, OAUTH_USER_SCOPE, genRandomString(5)
+                )
+                Timber.d("get github oauth uri: $githubOAthUri")
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(githubOAthUri))
+                startActivity(intent)
+            })
         }
     }
-
-    override fun initViewBinding() {
-        testSimpleEvent()
-        mBinding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(mBinding.root)
-        initEvent()
-//        engineViewModel.deliver()
-    }
-
-    private fun initEvent(){
-        mBinding.btnLogin.setOnClickListener{
-            mListPokemonViewModel.initDatabase(this)
-//            mListPokemonViewModel.fetchNextPokemonList()
-//            mListPokemonViewModel.fetchNextPokemonLst()
-
-//            this.startActivity(Intent(this, RecyclerViewActivity::class.java))
-
-//            requestTokenCode();
-//            val userName: String = mBinding.txtUserName.text.trim().toString();
-//            val userPwd: String = mBinding.txtUserPwd.text.trim().toString()
-//            mLoginViewModel.doLogin(userName, userPwd)
-//            mLoginViewModel.getAuthToken()
-        }
-    }
-
-    private fun requestTokenCode(){
-        val state = generateRandomString(5)
-        val OAUTH_URL = "https://github.com/login/oauth/authorize?" +
-                "client_id=$OAUTH_CLIENT_ID" +
-                "&redirect_uri=$OAUTH_REDIRECT_URI" +
-                "&scope=$OAUTH_USER_SCOPE" +
-                "&state=$state"
-
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(OAUTH_URL))
-        startActivity(intent)
-    }
-
 }

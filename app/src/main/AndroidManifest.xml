@@ -31,14 +31,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.component.login.OAutoTokenActivity"
+            android:name=".ui.component.login.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
+                <!-- github/setting/Developer settings/OAuth App  -->
+                <!-- Authorization callback URL: ktsample://getCallbackCode -->
                 <data
                     android:host="getCallbackCode"
                     android:scheme="ktsample" />

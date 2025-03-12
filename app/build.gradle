@@ -101,6 +101,9 @@ dependencies {
     implementation "androidx.room:room-ktx:2.6.1"
     // 如果使用 LiveData，添加以下依赖
 //    implementation "androidx.room:room-livedata:2.4.3"
+
+    //timber
+    implementation 'com.jakewharton.timber:timber:5.0.1'
 }
 
 // Allow references to generated code
