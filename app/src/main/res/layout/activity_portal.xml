@@ -6,18 +6,18 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.ktsample.ui.component.list.ListPokemonViewModel" />
+            type="com.example.ktsample.ui.component.login.LoginViewModel" />
 
         <variable
-            name="listAdapter"
-            type="com.example.ktsample.ui.component.list.PokemonListAdapter" />
+            name="portalAdapter"
+            type="com.example.ktsample.ui.adatper.PortalAdapter" />
     </data>
 
     <RelativeLayout
         android:id="@+id/token"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.component.login.MainActivity">
+        tools:context=".ui.component.login.PortalActivity">
 
 
 
@@ -31,7 +31,7 @@
             android:layout_height="20.dp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listPage"
+            android:id="@+id/listPortal"
             android:layout_below="@+id/labUserToken"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -40,23 +40,18 @@
             android:padding="6dp"
             android:scrollbarStyle="outsideOverlay"
             android:scrollbars="vertical"
-            app:adapter="@{listAdapter}"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:spanCount="2"
-            app:paginationPokemonList="@{viewModel}"
-            app:submitList="@{viewModel.pokemonList}"
-            app:toast="@{viewModel.toastMessage}"
-            tools:listitem="@layout/viewholder_pokemon_item" />
+            app:spanCount="2" />
 
         <FrameLayout
             android:id="@+id/layoutLoading"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:clickable="true"
-            android:visibility="visible"
-            tools:visibility="visible">
+            android:layout_centerInParent="true"
+            android:visibility="gone">
 
             <ProgressBar
                 style="?android:attr/progressBarStyleLarge"

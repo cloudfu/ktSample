@@ -9,14 +9,16 @@ import com.example.ktsample.data.OAUTH_CLIENT_ID
 import com.example.ktsample.data.OAUTH_CLIENT_SECRET
 import com.example.ktsample.data.OAUTH_REDIRECT_URI
 import com.example.ktsample.data.login.OAuthTokenRequest
-import com.example.ktsample.databinding.ActivityOauthTokenBinding
+import com.example.ktsample.databinding.ActivityPortalBinding
+import com.example.ktsample.ui.adatper.PortalAdapter
 import com.example.ktsample.ui.base.BindingActivity
+import com.example.ktsample.ui.component.list.PokemonListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity @Inject constructor(): BindingActivity<ActivityOauthTokenBinding>(R.layout.activity_oauth_token) {
+class PortalActivity @Inject constructor(): BindingActivity<ActivityPortalBinding>(R.layout.activity_portal) {
 
     private val mViewModel: LoginViewModel by viewModels()
 
@@ -35,7 +37,15 @@ class MainActivity @Inject constructor(): BindingActivity<ActivityOauthTokenBind
             }
         }
 
-        observer()
+        binding{
+            val listPortalNames = listOf("A--------", "B--------", "C--------", "D--------", "E--------")
+            val adapter = PortalAdapter()
+            listPortal.adapter = adapter
+            adapter.submitList(listPortalNames)
+        }
+
+
+//        observer()
     }
 
     private fun observer() {

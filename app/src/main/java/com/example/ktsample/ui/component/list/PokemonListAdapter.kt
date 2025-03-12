@@ -1,6 +1,5 @@
 package com.example.ktsample.ui.component.list
 
-import android.os.SystemClock
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -8,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 import com.example.ktsample.R
 import com.example.ktsample.data.pokemon.Pokemon
 import com.example.ktsample.databinding.ViewholderPokemonItemBinding
+import com.example.ktsample.ui.adatper.BindingListAdapter
+import com.example.ktsample.ui.extension.binding
 
 class PokemonListAdapter: BindingListAdapter<Pokemon, PokemonListAdapter.PokemonViewHolder>(diffUtil){
 

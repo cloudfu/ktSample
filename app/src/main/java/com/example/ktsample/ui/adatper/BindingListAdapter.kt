@@ -1,4 +1,4 @@
-package com.example.ktsample.ui.component.list
+package com.example.ktsample.ui.adatper
 
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter

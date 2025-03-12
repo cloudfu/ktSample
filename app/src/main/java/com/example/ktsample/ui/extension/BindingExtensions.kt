@@ -1,4 +1,4 @@
-package com.example.ktsample.ui.component.list
+package com.example.ktsample.ui.extension
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,8 +8,6 @@ import androidx.databinding.ViewDataBinding
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.reflect.KFunction
-import kotlin.reflect.KProperty
 
 fun <T : ViewDataBinding> ViewGroup.binding(
     @LayoutRes layoutRes: Int,

@@ -4,6 +4,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ktsample.ui.adatper.BindingListAdapter
+import com.example.ktsample.ui.extension.whatIfNotNullAs
 
 object RecyclerViewBinding {
 
