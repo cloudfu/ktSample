@@ -1,4 +1,4 @@
-package com.example.ktsample.ui.component.list
+package com.example.ktsample.ui.component.pokemon
 
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager

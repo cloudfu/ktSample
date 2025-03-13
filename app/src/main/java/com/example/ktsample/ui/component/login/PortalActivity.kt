@@ -5,14 +5,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import com.example.ktsample.R
-import com.example.ktsample.data.OAUTH_CLIENT_ID
-import com.example.ktsample.data.OAUTH_CLIENT_SECRET
-import com.example.ktsample.data.OAUTH_REDIRECT_URI
+import com.example.ktsample.data.Const.OAUTH_CLIENT_ID
+import com.example.ktsample.data.Const.OAUTH_CLIENT_SECRET
+import com.example.ktsample.data.Const.OAUTH_REDIRECT_URI
+import com.example.ktsample.data.Const.PORTAL_LIST
 import com.example.ktsample.data.login.OAuthTokenRequest
 import com.example.ktsample.databinding.ActivityPortalBinding
 import com.example.ktsample.ui.adatper.PortalAdapter
 import com.example.ktsample.ui.base.BindingActivity
-import com.example.ktsample.ui.component.list.PokemonListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -38,14 +38,11 @@ class PortalActivity @Inject constructor(): BindingActivity<ActivityPortalBindin
         }
 
         binding{
-            val listPortalNames = listOf("A--------", "B--------", "C--------", "D--------", "E--------")
             val adapter = PortalAdapter()
             listPortal.adapter = adapter
-            adapter.submitList(listPortalNames)
+            adapter.submitList(PORTAL_LIST)
         }
-
-
-//        observer()
+        observer()
     }
 
     private fun observer() {

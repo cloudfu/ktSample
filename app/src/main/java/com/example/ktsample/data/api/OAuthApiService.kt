@@ -15,6 +15,10 @@ import retrofit2.http.Query
 
 interface OAuthApiService {
 
+    companion object {
+        val baseUrl = "https://github.com/"
+    }
+
     @GET("login/oauth/authorize")
     suspend fun getOAuthCode(
         @Query("client_id") client_id: String,

@@ -1,4 +1,4 @@
-package com.example.ktsample.ui.component.list
+package com.example.ktsample.ui.component.pokemon
 
 import android.view.View
 import android.widget.Toast

@@ -6,18 +6,18 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.ktsample.ui.component.list.ListPokemonViewModel" />
+            type="com.example.ktsample.ui.component.pokemon.ListPokemonViewModel" />
 
         <variable
             name="listAdapter"
-            type="com.example.ktsample.ui.component.list.PokemonListAdapter" />
+            type="com.example.ktsample.ui.component.pokemon.PokemonListAdapter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.component.list.RecyclerViewActivity">
+        tools:context=".ui.component.pokemon.PokemonListActivity">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
@@ -37,13 +37,5 @@
             app:toast="@{viewModel.toastMessage}"
             tools:listitem="@layout/viewholder_pokemon_item" />
 
-<!--        <Button-->
-<!--            android:id="@+id/button"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Button"-->
-<!--            tools:layout_editor_absoluteX="37dp"-->
-<!--            tools:layout_editor_absoluteY="29dp"-->
-<!--            tools:ignore="MissingConstraints" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

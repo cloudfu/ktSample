@@ -41,6 +41,7 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
     private val okHttpBuilder: OkHttpClient.Builder = OkHttpClient.Builder()
     private var mRetrofit: Retrofit
 
+    // 日志打印
     private val httpLogger: HttpLoggingInterceptor
         get() {
             val loggingInterceptor = HttpLoggingInterceptor()
@@ -48,6 +49,7 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
             return loggingInterceptor
         }
 
+    // 增加Http Head
     private var httpHeader = Interceptor { chain ->
         val original = chain.request()
         val request = original.newBuilder()
@@ -59,16 +61,7 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
 
     var baseUrlStr: String = "https://github.com/"
 //    var baseUrlStr: String = "https://pokeapi.co/api/v2/"
-
-    var baseUrl = Interceptor { chain ->
-//        val original = chain.request()
-//        val request = original.newBuilder()
-//            .header("Content-Type", "application/json")
-//            .method(original.method, original.body)
-//            .build()
-//        chain.proceed(request)
-
-
+    var dynamicBaseUrl = Interceptor { chain ->
         val originalRequest = chain.request()
         val originalUrl = originalRequest.url
 
@@ -86,14 +79,15 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
     }
 
     init{
+        // Proxy
 //        val proxyAddress = InetSocketAddress("127.0.0.1", 7897)
 //        val proxy = java.net.Proxy(java.net.Proxy.Type.HTTP, proxyAddress)
+//        okHttpBuilder.proxy(proxy)
 
         okHttpBuilder.connectTimeout(20, TimeUnit.SECONDS)
-//        okHttpBuilder.proxy(proxy)
         okHttpBuilder.addInterceptor(httpLogger)
         okHttpBuilder.addInterceptor(httpHeader)
-//        okHttpBuilder.addInterceptor(baseUrl)
+        okHttpBuilder.addInterceptor(dynamicBaseUrl)
         okHttpBuilder.connectTimeout(CONNECT_TIMEOUT.toLong(), TimeUnit.SECONDS)
         okHttpBuilder.readTimeout(CONNECT_TIMEOUT.toLong(), TimeUnit.SECONDS)
         okHttpBuilder.writeTimeout(CONNECT_TIMEOUT.toLong(), TimeUnit.SECONDS)
