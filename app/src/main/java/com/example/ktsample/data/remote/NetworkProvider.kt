@@ -64,12 +64,12 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
     // 动态HostUri
     private var dynamicHostUri = Interceptor { chain ->
         val originalRequest = chain.request()
-        val newBaseUrl = originalRequest.tag(String::class.java)
-        if (!newBaseUrl.isNullOrEmpty()) {
+        val newHostUri = originalRequest.tag(String::class.java)
+        if (!newHostUri.isNullOrEmpty()) {
 
             val newUrl = originalRequest.url.newBuilder()
-                .scheme(newBaseUrl.split("://")[0])
-                .host(newBaseUrl.split("://")[1].split("/")[0])
+                .scheme(newHostUri.split("://")[0])
+                .host(newHostUri.split("://")[1].split("/")[0])
                 .build()
 
             val newRequest: Request = originalRequest.newBuilder()
