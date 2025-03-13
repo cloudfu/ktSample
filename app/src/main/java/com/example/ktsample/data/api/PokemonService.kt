@@ -1,20 +1,18 @@
 package com.example.ktsample.data.api
 
-import com.example.ktsample.data.repository.ResultPackage
 import com.example.ktsample.data.city.City
 import com.example.ktsample.data.login.LoginResponse
 import com.example.ktsample.data.pokemon.PokemonResponse
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.Query
+import retrofit2.http.Tag
 
-interface ApiService {
+interface PokemonService {
 
     companion object {
-        val BASE_URL = "https://jenly1314.gitlab.io/"
+        val hostUri = "https://pokeapi.co/"
     }
 
     @Headers("Custom-Header: Value", "Another-Header: AnotherValue")
@@ -24,8 +22,9 @@ interface ApiService {
     @GET("api/auth/login.json")
     suspend fun login(userName: String, userPwd: String): Response<LoginResponse>
 
-    @GET("pokemon")
+    @GET("api/v2/pokemon")
     suspend fun fetchPokemonList(
+        @Tag hostUri: String,
         @Query("offset") offset: Int,
         @Query("limit") limit: Int,
     ): PokemonResponse

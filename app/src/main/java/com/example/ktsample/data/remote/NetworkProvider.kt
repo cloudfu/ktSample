@@ -12,6 +12,8 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
@@ -59,23 +61,25 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
         chain.proceed(request)
     }
 
-    var baseUrlStr: String = "https://github.com/"
-//    var baseUrlStr: String = "https://pokeapi.co/api/v2/"
-    var dynamicBaseUrl = Interceptor { chain ->
+    // 动态HostUri
+    private var dynamicHostUri = Interceptor { chain ->
         val originalRequest = chain.request()
-        val originalUrl = originalRequest.url
+        val newBaseUrl = originalRequest.tag(String::class.java)
+        if (!newBaseUrl.isNullOrEmpty()) {
 
-        val newUrl = baseUrlStr.toHttpUrlOrNull()
-            ?.newBuilder()
-            ?.encodedPath(originalUrl.encodedPath)
-            ?.query(originalUrl.encodedQuery)
-            ?.build()
+            val newUrl = originalRequest.url.newBuilder()
+                .scheme(newBaseUrl.split("://")[0])
+                .host(newBaseUrl.split("://")[1].split("/")[0])
+                .build()
 
-        val newRequest = originalRequest.newBuilder()
-            .url(newUrl!!)
-            .build()
+            val newRequest: Request = originalRequest.newBuilder()
+                .url(newUrl)
+                .build()
 
-        chain.proceed(newRequest)
+            chain.proceed(newRequest)
+        }else {
+            chain.proceed(originalRequest)
+        }
     }
 
     init{
@@ -87,7 +91,7 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
         okHttpBuilder.connectTimeout(20, TimeUnit.SECONDS)
         okHttpBuilder.addInterceptor(httpLogger)
         okHttpBuilder.addInterceptor(httpHeader)
-        okHttpBuilder.addInterceptor(dynamicBaseUrl)
+        okHttpBuilder.addInterceptor(dynamicHostUri)
         okHttpBuilder.connectTimeout(CONNECT_TIMEOUT.toLong(), TimeUnit.SECONDS)
         okHttpBuilder.readTimeout(CONNECT_TIMEOUT.toLong(), TimeUnit.SECONDS)
         okHttpBuilder.writeTimeout(CONNECT_TIMEOUT.toLong(), TimeUnit.SECONDS)
@@ -96,10 +100,9 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
         mRetrofit = Retrofit.Builder()
             .client(okHttpBuilder.build())
             .baseUrl(BASE_URL)
-//            .addConverterFactory(GsonConverterFactory.create())
 //            .addConverterFactory(MoshiConverterFactory.create())
-
             .addConverterFactory(FormUrlEncodedConverterFactory())
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
@@ -141,6 +144,18 @@ class FormUrlEncodedConverterFactory : Converter.Factory() {
     ): Converter<ResponseBody, *>? {
         if (type == OAuthTokenResponse::class.java) {
             return FormUrlEncodedResponseBodyConverter()
+        }
+        return null
+    }
+
+    override fun requestBodyConverter(
+        type: Type,
+        parameterAnnotations: Array<out Annotation>,
+        methodAnnotations: Array<out Annotation>,
+        retrofit: Retrofit
+    ): Converter<*, RequestBody>? {
+        if (type == OAuthTokenResponse::class.java) {
+            return super.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit)
         }
         return null
     }

@@ -27,15 +27,10 @@
             android:padding="6dp"
             android:scrollbarStyle="outsideOverlay"
             android:scrollbars="vertical"
-            app:adapter="@{listAdapter}"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:spanCount="2"
-            app:paginationPokemonList="@{viewModel}"
-            app:submitList="@{viewModel.pokemonList}"
-            app:toast="@{viewModel.toastMessage}"
-            tools:listitem="@layout/viewholder_pokemon_item" />
+            app:spanCount="2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
