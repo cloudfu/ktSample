@@ -2,13 +2,9 @@ package com.example.ktsample.data.remote
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.net.Proxy
 import android.util.Log
-import com.example.ktsample.data.api.OAuthApiService
 import com.example.ktsample.data.login.OAuthTokenResponse
-import com.example.ktsample.data.pokemon.PokemonResponse
 import dagger.hilt.android.qualifiers.ApplicationContext
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -20,10 +16,9 @@ import retrofit2.Converter
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
+import timber.log.Timber
 import java.io.IOException
 import java.lang.reflect.Type
-import java.net.InetSocketAddress
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -63,23 +58,43 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
 
     // 动态HostUri
     private var dynamicHostUri = Interceptor { chain ->
-        val originalRequest = chain.request()
-        val newHostUri = originalRequest.tag(String::class.java)
-        if (!newHostUri.isNullOrEmpty()) {
+        var request = chain.request()
+        val newHostUri = request.tag(String::class.java)?.toHttpUrlOrNull()
 
-            val newUrl = originalRequest.url.newBuilder()
-                .scheme(newHostUri.split("://")[0])
-                .host(newHostUri.split("://")[1].split("/")[0])
+        // update scheme & host
+        newHostUri?.let {
+            val builder = request.url.newBuilder()
+                .scheme(it.scheme)
+                .host(it.host)
                 .build()
 
-            val newRequest: Request = originalRequest.newBuilder()
-                .url(newUrl)
+            // update request
+            request = request.newBuilder()
+                .url(builder)
                 .build()
-
-            chain.proceed(newRequest)
-        }else {
-            chain.proceed(originalRequest)
         }
+
+        /***
+         *         val originalRequest = chain.request()
+         *         val newBaseUrl = originalRequest.tag(String::class.java)
+         *         if (!newBaseUrl.isNullOrEmpty()) {
+         *
+         *             val newUrl = originalRequest.url.newBuilder()
+         *                 .scheme(newBaseUrl.split("://")[0])
+         *                 .host(newBaseUrl.split("://")[1].split("/")[0])
+         *                 .build()
+         *
+         *             val newRequest: Request = originalRequest.newBuilder()
+         *                 .url(newUrl)
+         *                 .build()
+         *
+         *             chain.proceed(newRequest)
+         *         }else {
+         *             chain.proceed(originalRequest)
+         *         }
+         */
+
+        chain.proceed(request)
     }
 
     init{
@@ -101,8 +116,9 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
             .client(okHttpBuilder.build())
             .baseUrl(BASE_URL)
 //            .addConverterFactory(MoshiConverterFactory.create())
-            .addConverterFactory(FormUrlEncodedConverterFactory())
-            .addConverterFactory(GsonConverterFactory.create())
+//            .addConverterFactory(FormUrlEncodedConverterFactory())
+//            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(DynamicConverterFactory())
             .build()
     }
 
@@ -136,16 +152,59 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
     }
 }
 
-class FormUrlEncodedConverterFactory : Converter.Factory() {
+// 定义 XML 注解
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class FormConverter
+
+// 定义 JSON 注解
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class GsonConverter
+
+class DynamicConverterFactory(
+) : Converter.Factory() {
+
+    private val formConverterFactory = FormConverterFactory()
+    private val jsonConverterFactory = GsonConverterFactory.create()
+
     override fun responseBodyConverter(
         type: Type,
         annotations: Array<out Annotation>,
         retrofit: Retrofit
     ): Converter<ResponseBody, *>? {
-        if (type == OAuthTokenResponse::class.java) {
-            return FormUrlEncodedResponseBodyConverter()
+        annotations.forEach { annotation ->
+            when (annotation) {
+                is FormConverter -> return formConverterFactory.responseBodyConverter(type, annotations, retrofit)
+                is GsonConverter -> return jsonConverterFactory.responseBodyConverter(type, annotations, retrofit)
+            }
         }
         return null
+    }
+
+    override fun requestBodyConverter(
+        type: Type,
+        annotations: Array<out Annotation>,
+        methodAnnotations: Array<out Annotation>,
+        retrofit: Retrofit
+    ): Converter<*, RequestBody>? {
+        annotations.forEach { annotation ->
+            when (annotation) {
+                is FormConverter -> return formConverterFactory.requestBodyConverter(type, annotations, methodAnnotations, retrofit)
+                is GsonConverter -> return jsonConverterFactory.requestBodyConverter(type, annotations, methodAnnotations, retrofit)
+            }
+        }
+        return null
+    }
+}
+
+class FormConverterFactory : Converter.Factory() {
+    override fun responseBodyConverter(
+        type: Type,
+        annotations: Array<out Annotation>,
+        retrofit: Retrofit
+    ): Converter<ResponseBody, *>? {
+        return FormUrlEncodedResponseBodyConverter()
     }
 
     override fun requestBodyConverter(
@@ -154,10 +213,7 @@ class FormUrlEncodedConverterFactory : Converter.Factory() {
         methodAnnotations: Array<out Annotation>,
         retrofit: Retrofit
     ): Converter<*, RequestBody>? {
-        if (type == OAuthTokenResponse::class.java) {
-            return super.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit)
-        }
-        return null
+        return super.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit)
     }
 }
 
@@ -179,7 +235,7 @@ class FormUrlEncodedResponseBodyConverter : Converter<ResponseBody, OAuthTokenRe
                 }
             }
         }
-        Log.i("TAG", tokenResponse.toString())
+        Timber.i(tokenResponse.toString())
         return tokenResponse
     }
 }
