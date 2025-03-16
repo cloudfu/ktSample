@@ -30,11 +30,9 @@ class PortalActivity @Inject constructor(): BindingActivity<ActivityPortalBindin
     private fun init(){
         val uri: Uri? = intent.data
         val code = uri?.getQueryParameter("code")
-        code.let {
-            if(!it.isNullOrEmpty()){
-                Timber.d("github oauth code:$it")
-                mViewModel.getAuthToken(OAuthTokenRequest(OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, it, OAUTH_REDIRECT_URI))
-            }
+        code?.let {
+            Timber.d("github oauth code:$it")
+            mViewModel.getAuthToken(OAuthTokenRequest(OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, it, OAUTH_REDIRECT_URI))
         }
 
         binding{

@@ -16,8 +16,10 @@ import retrofit2.Converter
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.FormUrlEncoded
 import timber.log.Timber
 import java.io.IOException
+import java.lang.reflect.Method
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -56,9 +58,37 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
         chain.proceed(request)
     }
 
+    private fun isFormUrlEncodedByContentType(request: Request): Boolean {
+        val contentType = request.body?.contentType()
+        return contentType?.type == "application" && contentType.subtype == "x-www-form-urlencoded"
+    }
+
+    private fun isFormUrlEncodedByAnnotation(request: Request): Boolean {
+        val tag = request.tag()
+        if (tag is Method) {
+            return tag.isAnnotationPresent(FormUrlEncoded::class.java)
+        }
+        return false
+    }
+
+    private fun isFormUrlRequest(request: Request): Boolean{
+        val isFormUrlEncodedByHeader = isFormUrlEncodedByContentType(request)
+
+        // 方法二：通过检查请求方法的注解
+        val isFormUrlEncodedByAnnotation = isFormUrlEncodedByAnnotation(request)
+
+        // 这里可以根据实际需求使用其中一种判断方式，或者结合两种方式
+        return isFormUrlEncodedByHeader || isFormUrlEncodedByAnnotation
+    }
+
     // 动态HostUri
     private var dynamicHostUri = Interceptor { chain ->
         var request = chain.request()
+
+        if (isFormUrlRequest(request)) {
+            println("This is a FormUrlEncoded request.")
+        }
+
         val newHostUri = request.tag(String::class.java)?.toHttpUrlOrNull()
 
         // update scheme & host
@@ -94,6 +124,7 @@ class NetworkProvider @Inject constructor(@ApplicationContext val context: Conte
          *         }
          */
 
+        Timber.d(request.url.toString())
         chain.proceed(request)
     }
 
@@ -203,7 +234,7 @@ class FormConverterFactory : Converter.Factory() {
         type: Type,
         annotations: Array<out Annotation>,
         retrofit: Retrofit
-    ): Converter<ResponseBody, *>? {
+    ): Converter<ResponseBody, *> {
         return FormUrlEncodedResponseBodyConverter()
     }
 

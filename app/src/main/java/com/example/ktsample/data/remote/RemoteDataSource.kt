@@ -10,6 +10,7 @@ import com.example.ktsample.data.login.OAuthTokenResponse
 import com.example.ktsample.data.pokemon.Pokemon
 import com.example.ktsample.data.repository.DataPackageState
 import com.example.ktsample.data.repository.IDataSource
+import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,6 +33,7 @@ class RemoteDataSource @Inject constructor(
             }
         } catch (_: IOException) {
         }
+
 
         return ResultPackage(
                     data = null,
@@ -69,7 +71,7 @@ class RemoteDataSource @Inject constructor(
             oAuthTokenRequest.code,
             oAuthTokenRequest.redirectUri
         )
-        Log.i("TAG",response.toString())
+        Timber.d(response.toString())
         return ResultPackage(
             data = response,
             state = DataPackageState.SUCCEED

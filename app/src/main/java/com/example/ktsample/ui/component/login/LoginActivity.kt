@@ -68,15 +68,15 @@ class LoginActivity @Inject constructor(): BindingActivity<ActivityLoginBinding>
                     </activity>
                  */
 
-                startActivity(Intent(it.context, PokemonListActivity::class.java))
+//                startActivity(Intent(it.context, PokemonListActivity::class.java))
 
 
-//                val githubOAthUri = mViewModel.getGithubOAuthUrl(
-//                    OAUTH_CLIENT_ID, OAUTH_REDIRECT_URI, OAUTH_USER_SCOPE, genRandomString(5)
-//                )
-//                Timber.d("get github oauth uri: $githubOAthUri")
-//                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(githubOAthUri))
-//                startActivity(intent)
+                val githubOAthUri = mViewModel.getGithubOAuthUrl(
+                    OAUTH_CLIENT_ID, OAUTH_REDIRECT_URI, OAUTH_USER_SCOPE, genRandomString(5)
+                )
+                Timber.d("get github oauth uri: $githubOAthUri")
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(githubOAthUri))
+                startActivity(intent)
             })
         }
     }

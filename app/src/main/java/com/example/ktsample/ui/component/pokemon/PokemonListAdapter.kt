@@ -11,9 +11,6 @@ import com.example.ktsample.ui.adatper.BindingListAdapter
 import com.example.ktsample.ui.extension.binding
 
 class PokemonListAdapter: BindingListAdapter<Pokemon, PokemonListAdapter.PokemonViewHolder>(diffUtil){
-
-    private var onClickedAt = 0
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PokemonViewHolder {
         return parent.binding<ViewholderPokemonItemBinding>(R.layout.viewholder_pokemon_item).let(::PokemonViewHolder)
     }
