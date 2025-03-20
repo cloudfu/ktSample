@@ -7,12 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.ktsample.data.local.DatabaseProvider
 import com.example.ktsample.data.pokemon.Pokemon
 import com.example.ktsample.data.pokemon.PokemonEntity
+import com.example.ktsample.data.remote.ApiResponse
 import com.example.ktsample.data.repository.DataRepository
 import com.example.ktsample.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,7 +47,6 @@ class ListPokemonViewModel @Inject constructor(private val dataRepository: DataR
                 dataRepository.fetchPokemonList(
                     page = pageIndex,
                     onStart = { isLoading = true },
-                    onSuccess = { isLoading = false },
                     onComplete = { isLoading = false },
                     onError = { errMsg ->
                         toastMessage = errMsg
@@ -54,8 +55,12 @@ class ListPokemonViewModel @Inject constructor(private val dataRepository: DataR
 //                var list = result.single()
 //                println(list)
             }.collect{
-                pokemonList.value = it
-                println(it.size)
+                when(it){
+                    is ApiResponse.Success -> Timber.i("success: ${it.msg}")
+                    is ApiResponse.Empty -> Timber.i("empty: ${it.msg}")
+                    is ApiResponse.Failure -> Timber.i("failure: ${it.msg}")
+                    is ApiResponse.Loading -> Timber.i("loading: ${it.msg}")
+                }
             }
         }
     }
@@ -99,15 +104,17 @@ class ListPokemonViewModel @Inject constructor(private val dataRepository: DataR
                 dataRepository.fetchPokemonList(
                     page = 0,
                     onStart = {isLoading = true},
-                    onSuccess = {isLoading = false},
                     onComplete = {isLoading = false},
                     onError = { errMsg ->
                         toastMessage = errMsg
                     }
                 ).collect{
-                    var pokemonList = it;
-                    var count = pokemonList.size
-                    Log.i("count", count.toString())
+                    when(it){
+                        is ApiResponse.Success -> Timber.i("success: ${it.msg}")
+                        is ApiResponse.Empty -> Timber.i("empty: ${it.msg}")
+                        is ApiResponse.Failure -> Timber.i("failure: ${it.msg}")
+                        is ApiResponse.Loading -> Timber.i("loading: ${it.msg}")
+                    }
                 }
             }
         }

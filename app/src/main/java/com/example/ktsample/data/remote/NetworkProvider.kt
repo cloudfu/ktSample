@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.util.Log
 import com.example.ktsample.data.login.OAuthTokenResponse
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
@@ -193,11 +195,10 @@ annotation class FormConverter
 @Retention(AnnotationRetention.RUNTIME)
 annotation class GsonConverter
 
-class DynamicConverterFactory(
-) : Converter.Factory() {
+class DynamicConverterFactory: Converter.Factory() {
 
     private val formConverterFactory = FormConverterFactory()
-    private val jsonConverterFactory = GsonConverterFactory.create()
+    private val gsonConverterFactory = GsonConverterFactory.create()
 
     override fun responseBodyConverter(
         type: Type,
@@ -207,7 +208,7 @@ class DynamicConverterFactory(
         annotations.forEach { annotation ->
             when (annotation) {
                 is FormConverter -> return formConverterFactory.responseBodyConverter(type, annotations, retrofit)
-                is GsonConverter -> return jsonConverterFactory.responseBodyConverter(type, annotations, retrofit)
+                is GsonConverter -> return gsonConverterFactory.responseBodyConverter(type, annotations, retrofit)
             }
         }
         return null
@@ -222,10 +223,49 @@ class DynamicConverterFactory(
         annotations.forEach { annotation ->
             when (annotation) {
                 is FormConverter -> return formConverterFactory.requestBodyConverter(type, annotations, methodAnnotations, retrofit)
-                is GsonConverter -> return jsonConverterFactory.requestBodyConverter(type, annotations, methodAnnotations, retrofit)
+                is GsonConverter -> return gsonConverterFactory.requestBodyConverter(type, annotations, methodAnnotations, retrofit)
             }
         }
         return null
+    }
+}
+
+class MyGsonConverterFactory: Converter.Factory() {
+    override fun responseBodyConverter(
+        type: Type,
+        annotations: Array<out Annotation>,
+        retrofit: Retrofit
+    ): Converter<ResponseBody, *> {
+        val gson = GsonBuilder().create()
+        val delegate = gson.getAdapter(TypeToken.get(type)).nullSafe()
+        return GsonEncodedResponseBodyConverter(delegate)
+    }
+
+//    override fun requestBodyConverter(
+//        type: Type,
+//        parameterAnnotations: Array<out Annotation>,
+//        methodAnnotations: Array<out Annotation>,
+//        retrofit: Retrofit
+//    ): Converter<*, RequestBody>? {
+//        return super.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit)
+//    }
+}
+
+
+class GsonEncodedResponseBodyConverter<T : Any>(private val delegate: com.google.gson.TypeAdapter<T>): Converter<ResponseBody, ApiResponse<Any>> {
+
+    override fun convert(value: ResponseBody): ApiResponse<Any> {
+        try {
+            // 这里可以进行二次封装
+            // 例如，假设响应数据是一个包含状态码和数据的对象
+            // 可以在这里对 json 进行处理
+            val str = value.string()
+            throw Exception("这里获取的是ApiResponse封装之后的对象，但是value是针对Http返回的PokemonResponse对象")
+            val gson = delegate.fromJson(value.string())
+            return ApiResponse.Success(gson)
+        } finally {
+            value.close()
+        }
     }
 }
 
@@ -248,12 +288,11 @@ class FormConverterFactory : Converter.Factory() {
     }
 }
 
-class FormUrlEncodedResponseBodyConverter : Converter<ResponseBody, OAuthTokenResponse> {
-    override fun convert(value: ResponseBody): OAuthTokenResponse {
+class FormUrlEncodedResponseBodyConverter : Converter<ResponseBody, ApiResponse<Any>> {
+    override fun convert(value: ResponseBody): ApiResponse<Any> {
         val responseString = value.string()
         val params = responseString.split("&")
         val tokenResponse = OAuthTokenResponse("", "", "")
-
         if (params.size == 3) {
             for (param in params) {
                 val keyValue = param.split("=")
@@ -266,7 +305,8 @@ class FormUrlEncodedResponseBodyConverter : Converter<ResponseBody, OAuthTokenRe
                 }
             }
         }
+        value.close()
         Timber.i(tokenResponse.toString())
-        return tokenResponse
+        return ApiResponse.Success(tokenResponse)
     }
 }

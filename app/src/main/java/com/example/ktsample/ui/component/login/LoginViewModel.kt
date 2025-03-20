@@ -9,6 +9,7 @@ import com.example.ktsample.data.city.CityList
 import com.example.ktsample.data.login.LoginResponse
 import com.example.ktsample.data.login.OAuthTokenRequest
 import com.example.ktsample.data.login.OAuthTokenResponse
+import com.example.ktsample.data.remote.ApiResponse
 import com.example.ktsample.data.repository.ResultPackage
 import com.example.ktsample.ui.component.engine.EngineViewModel
 import com.example.ktsample.ui.base.BaseViewModel
@@ -75,11 +76,11 @@ class LoginViewModel @Inject constructor(private val dataRepository: DataReposit
     fun getAuthToken(codeTokenRequest: OAuthTokenRequest){
         viewModelScope.launch {
             dataRepository.getOAuthToken(codeTokenRequest).collect {
-                _oAuthToken.value = it
-                if(!it.state.isLoading()){
-                    Timber.d(it.data.toString())
-                }else{
-                    Timber.d("Loading...")
+                when(it){
+                    is ApiResponse.Loading -> println("loading")
+                    is ApiResponse.Failure -> println("failure: $it.toString()")
+                    is ApiResponse.Success -> println("success: $it.toString()")
+                    is ApiResponse.Empty -> TODO()
                 }
             }
         }

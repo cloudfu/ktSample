@@ -6,6 +6,7 @@ import com.example.ktsample.data.login.OAuthCodeRequest
 import com.example.ktsample.data.login.OAuthTokenRequest
 import com.example.ktsample.data.login.OAuthTokenResponse
 import com.example.ktsample.data.pokemon.Pokemon
+import com.example.ktsample.data.remote.ApiResponse
 import com.example.ktsample.data.repository.DataPackageState
 import com.example.ktsample.data.repository.IDataSource
 import com.example.ktsample.data.repository.ResultPackage
@@ -29,7 +30,7 @@ class LocalDataSource @Inject constructor(
         )
     }
 
-    override suspend fun getOAuthToken(oAuthTokenRequest: OAuthTokenRequest): ResultPackage<OAuthTokenResponse> {
+    override suspend fun getOAuthToken(oAuthTokenRequest: OAuthTokenRequest): ApiResponse<OAuthTokenResponse> {
         TODO("Not yet implemented")
     }
 

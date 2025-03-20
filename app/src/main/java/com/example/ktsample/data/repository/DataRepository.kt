@@ -10,6 +10,8 @@ import com.example.ktsample.data.login.OAuthCodeRequest
 import com.example.ktsample.data.login.OAuthTokenRequest
 import com.example.ktsample.data.login.OAuthTokenResponse
 import com.example.ktsample.data.pokemon.Pokemon
+import com.example.ktsample.data.pokemon.PokemonResponse
+import com.example.ktsample.data.remote.ApiResponse
 import com.example.ktsample.data.remote.RemoteDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +20,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import retrofit2.Response
 import retrofit2.Retrofit
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -44,19 +48,19 @@ class DataRepository @Inject constructor(
     /***
      *
      */
-    fun getOAuthToken(codeTokenRequest: OAuthTokenRequest): Flow<ResultPackage<OAuthTokenResponse>> {
+    fun getOAuthToken(codeTokenRequest: OAuthTokenRequest): Flow<ApiResponse<OAuthTokenResponse>> {
         return flow {
             kotlinx.coroutines.delay(1000)
             emit(remoteDataSource.getOAuthToken(codeTokenRequest))
         }.onStart {
-            emit(ResultPackage.loading())
+            emit(ApiResponse.Loading())
         }.onCompletion { cause ->
             if (cause != null) {
                 println("flow completed exception")
             } else {
                 println("onCompletion")
             }
-            Log.i(TAG, "getOAuthToken completed")
+            Timber.i("getOAuthToken completed")
         }.catch { ex ->
             println("catch exception: ${ex.message}")
         }.flowOn(Dispatchers.IO)
@@ -67,13 +71,16 @@ class DataRepository @Inject constructor(
      */
     fun fetchPokemonList(
         page: Int,
-        onSuccess: () -> Unit,
         onStart: () -> Unit,
         onComplete: () -> Unit,
         onError: (String) -> Unit
 
-    ) = flow<List<Pokemon>> {
-        emit(remoteDataSource.fetchPokemonList(page))
+    ) = flow<ApiResponse<PokemonResponse>> {
+        try{
+            emit(remoteDataSource.fetchPokemonList(page))
+        }catch (ex: Exception){
+            onError(ex.message.toString())
+        }
         }.onStart { onStart()
         }.onCompletion { onComplete()
         }.flowOn(Dispatchers.IO)

@@ -3,6 +3,7 @@ package com.example.ktsample.data.api
 import com.example.ktsample.data.city.City
 import com.example.ktsample.data.login.LoginResponse
 import com.example.ktsample.data.pokemon.PokemonResponse
+import com.example.ktsample.data.remote.ApiResponse
 import com.example.ktsample.data.remote.GsonConverter
 import retrofit2.Response
 import retrofit2.http.GET
@@ -29,7 +30,7 @@ interface PokemonService {
         @Tag hostUri: String,
         @Query("offset") offset: Int,
         @Query("limit") limit: Int,
-    ): PokemonResponse
+    ): Response<PokemonResponse>
 
     // 动态Head添加
 //    @GET("data")

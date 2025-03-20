@@ -3,6 +3,7 @@ package com.example.ktsample.data.api
 import com.example.ktsample.data.city.City
 import com.example.ktsample.data.login.OAuthTokenRequest
 import com.example.ktsample.data.login.OAuthTokenResponse
+import com.example.ktsample.data.remote.ApiResponse
 import com.example.ktsample.data.remote.FormConverter
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -38,5 +39,5 @@ interface OAuthApiService {
         @Field("client_secret") clientSecret: String,
         @Field("code") code: String,
         @Field("redirect_uri") redirectUri: String
-    ): OAuthTokenResponse
+    ): ApiResponse<OAuthTokenResponse>
 }

@@ -8,8 +8,8 @@ import com.example.ktsample.data.city.CityList
 import com.example.ktsample.data.login.OAuthTokenRequest
 import com.example.ktsample.data.login.OAuthTokenResponse
 import com.example.ktsample.data.pokemon.Pokemon
+import com.example.ktsample.data.pokemon.PokemonResponse
 import com.example.ktsample.data.repository.DataPackageState
-import com.example.ktsample.data.repository.IDataSource
 import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
@@ -18,11 +18,11 @@ import javax.inject.Singleton
 @Singleton
 class RemoteDataSource @Inject constructor(
     private val networkProvider: NetworkProvider
-): IDataSource {
+) {
 
     private val TAG = "RemoteDataSource"
 
-    override suspend fun getCities(): ResultPackage<CityList> {
+    suspend fun getCities(): ResultPackage<CityList> {
         val pokemonService = networkProvider.createApiService(PokemonService::class.java)
 
         try {
@@ -63,19 +63,16 @@ class RemoteDataSource @Inject constructor(
 //        }
     }
 
-    override suspend fun getOAuthToken(oAuthTokenRequest: OAuthTokenRequest): ResultPackage<OAuthTokenResponse> {
+    suspend fun getOAuthToken(oAuthTokenRequest: OAuthTokenRequest): ApiResponse<OAuthTokenResponse> {
         val oAuthApiService = networkProvider.createApiService(OAuthApiService::class.java)
-        val response: OAuthTokenResponse = oAuthApiService.getOAuthUserToken(
+        val response: ApiResponse<OAuthTokenResponse> = oAuthApiService.getOAuthUserToken(
             oAuthTokenRequest.clientId,
             oAuthTokenRequest.clientSecret,
             oAuthTokenRequest.code,
             oAuthTokenRequest.redirectUri
         )
         Timber.d(response.toString())
-        return ResultPackage(
-            data = response,
-            state = DataPackageState.SUCCEED
-        )
+        return response
 
 //        response.enqueue(object : retrofit2.Callback<String> {
 //            override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -104,21 +101,21 @@ class RemoteDataSource @Inject constructor(
 
     }
 
-    override suspend fun fetchPokemonList(page: Int): List<Pokemon> {
+    suspend fun fetchPokemonList(page: Int): ApiResponse<PokemonResponse> {
         val pokemonService = networkProvider.createApiService(PokemonService::class.java)
 
         try {
             val pageSize  = 40
             val rows = (page + 1 ) * pageSize
-            val response = pokemonService.fetchPokemonList(PokemonService.hostUri,0,rows)
-            var resultCode = response.count
-            return response.results
+            val result = pokemonService.fetchPokemonList(PokemonService.hostUri,0,rows)
+            val pokemon: PokemonResponse? = result.body()
+            val count = pokemon?.count ?:0
+            pokemon?.let {
+                return ApiResponse.Success(data = pokemon)
+            }
         } catch (_: IOException) {
         }
-        return emptyList<Pokemon>()
+        return ApiResponse.Empty<PokemonResponse>()
     }
 
-    override fun getCode(): String {
-        return TAG
-    }
 }
